@@ -176,7 +176,7 @@ npm install
 
 Below are minimal steps to run Bruno collections locally via the prepared script.
 
-### Pre-step: Prepare test data (REQUIRED)
+### Pre-step: Prepare test data and config files (REQUIRED)
 Before running `local_start.sh`, you **must** prepare test data for conversion:
 1. Create/modify file `tools/local_test_params.json` and fill it with test data
 2. Download the collection(s) and environment(s) you need to run into the local-collection folder. The paths to the collections and environment(s) must match the contents of file `tools/local_test_params.json`
@@ -211,7 +211,7 @@ Before running `local_start.sh`, you **must** prepare test data for conversion:
 
 Below are minimal steps to run Bruno collections locally via the prepared script.
 
-### Pre-step: Prepare test data (REQUIRED)
+### Pre-step: Prepare test data (REQUIRED; almost the same as above)
 Before running `local_start.sh`, you **must** prepare test data for conversion:
 1. Create/modify file `tools/local_test_params.json` and fill it with test data
 2. Download the collection(s) and environment(s) you need to run into the local-collection folder. The paths to the collections and environment(s) must match the contents of file `tools/local_test_params.json`
@@ -221,7 +221,6 @@ Before running `local_start.sh`, you **must** prepare test data for conversion:
 6. The main file for running the collection at the end of the local_starts.sh file should be entrypoint.sh
 
 **Example of the contents of file `tools/local_test_params.json` is shown in the previous section.**
-
 
 ### Quick Start
 ```bash
