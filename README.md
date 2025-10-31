@@ -78,7 +78,7 @@ flowchart TD
 - __ATP_STORAGE_SERVER_UI_URL__ - S3 UI URL
 - __CURRENT_DATE__ - Optional. Format `YYYY-MM-DD`, example: `2025-07-30`
 - __CURRENT_TIME__ - Optional. Format `HH:MM:SS`, example `23:45:12`
-- __ATP_REPORT_VIEW_UI_URL__ - Link to S3 Static viewer, example <https://web-atp.kubesite.somedomain.com>
+- __ATP_REPORT_VIEW_UI_URL__ - URL of S3 Static viewer
 
 #### TEST_PARAMS Example
 
@@ -90,7 +90,7 @@ flowchart TD
         "NAMESPACE": "systems_under_test",
         "SERVER_HOSTNAME": "project.cloud.somedomain.com",
         "SERVER_PORT": "6443",
-        "cluster": ".k8s-apps5.k8s.sdntest.somedomain.com",
+        "cluster": ".k8s-apps5.k8s.sdntest.somedomain.com"
     },
     "env": "mockserver",
     "collections": [
