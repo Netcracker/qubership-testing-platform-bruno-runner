@@ -50,3 +50,4 @@ RUN chmod -R 755 /scripts && \
 USER 1007
 
 ENTRYPOINT ["/app/entrypoint.sh"]
+
