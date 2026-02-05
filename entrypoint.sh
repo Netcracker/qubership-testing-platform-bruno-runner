@@ -38,4 +38,6 @@ fi
 generate_email_notification_json
 finalize_upload
 
+sleep 30
+
 echo "✅ Test job finished successfully!"

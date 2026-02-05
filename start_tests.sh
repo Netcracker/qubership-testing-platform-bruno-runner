@@ -67,7 +67,7 @@ for collection_dir in "${BRUNO_COLLECTIONS_ARRAY[@]}"; do
             echo "Output:"
             echo "$output"
             echo "✅ Bruno run succeeded for collection: $collection_name"
-    fi
+        fi
         # Return to previous directory
         popd > /dev/null
         # Convert Bruno JSON to Allure results
