@@ -7,7 +7,7 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.22/community/" >/etc/apk/repo
     apk update && apk add --no-cache ca-certificates \
       bash=5.2.37-r0 \
       curl=8.14.1-r2 \
-      jq=1.8.0-r0 \
+      jq=1.8.1-r0 \
       tar=1.35-r3 \
       unzip \
       nano && \
