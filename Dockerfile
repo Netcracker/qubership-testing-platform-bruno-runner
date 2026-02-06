@@ -1,4 +1,6 @@
-FROM alpine/bruno:1.30.0
+FROM node:18-alpine
+
+RUN npm install -g @usebruno/cli
 
 ENV HOME_EX=/app
 
