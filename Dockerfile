@@ -47,9 +47,6 @@ COPY --chown=runner:runner --chmod=755 entrypoint.sh /app/entrypoint.sh
 RUN chmod -R 755 /scripts && \
     chmod 755 /start_tests.sh
 
-RUN node -v
-RUN node -e "console.log(typeof File)"
-
 USER 1007
 
 ENTRYPOINT ["/app/entrypoint.sh"]
