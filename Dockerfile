@@ -1,5 +1,4 @@
 FROM node:20-alpine
-RUN npm install -g @usebruno/cli
 
 ENV HOME_EX=/app
 
