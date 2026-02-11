@@ -1,42 +1,24 @@
-# ============================================
-# check_env_var — ensure an env var is set or compute & export it.
-#
-# Usage:
-#   check_env_var VAR_NAME [COMPUTE_EXPR]
-#
-# Args:
-#   VAR_NAME      Name of the environment variable to check.
-#   COMPUTE_EXPR  (optional) Bash expression/command to compute the value if
-#                 VAR_NAME is empty. Evaluated with `eval`.
-#
-# Behavior:
-#   - If VAR_NAME is unset/empty:
-#       * If COMPUTE_EXPR is provided: evaluates it, exports the result to
-#         VAR_NAME, and echoes "VAR_NAME = VALUE (Computed)".
-#       * If COMPUTE_EXPR is missing: prints an error to stderr and exits 1.
-#   - If VAR_NAME is already set: echoes "VAR_NAME = VALUE".
-# ============================================
 check_env_var() {
     local var_name="$1"
     local compute_expr="$2"
-    local computed_value  # Announcing in advance
+    local computed_value
 
-    # Check if the variable exists and if it is not empty
+    # Check if the variable exists and is non-empty
     if [[ -z "${!var_name:-}" ]]; then
         if [[ -z "$compute_expr" ]]; then
-            echo "❗Error: Variable $var_name must be specified!" >&2
+            echo "❗Error: variable $var_name must be set!" >&2
             exit 1
         else
-            # Calculate the value
+            # Compute the value
             computed_value=$(eval "$compute_expr" 2>/dev/null)
 
-            # Checking for successful completion
+            # Check command exit status
             if [ $? -ne 0 ]; then
                 echo "❗Error calculating the value for $var_name" >&2
                 exit 1
             fi
 
-            # Export variable
+            # Export the variable
             declare -gx "$var_name"="$computed_value"
             echo "${var_name} = ${computed_value} (Computed)"
         fi
@@ -57,11 +39,16 @@ extract_bruno_env() {
     local output_var_name="$2"
     local result=""
 
-    # Extract the path to the environment
+    # Extract environment path (env)
     result=$(echo "$json_input" | jq -r '.env')
     echo "➡️ Extracted Bruno environment: $result"
+    # If the result ends with .bru, remove the .bru extension
+    if [[ "$result" == *.bru ]]; then
+        result="${result%.bru}"
+    fi
 
-    # Export the result to a variable with a specified name
+
+    # Export the result into the variable with the provided name
     eval "$output_var_name=\"$result\""
 }
 
@@ -79,10 +66,10 @@ extract_bruno_collections() {
     local output_var_name="$2"
     local result_array=()
 
-    # Retrieve the array of collections and save it to a temporary array
+    # Extract collections array and store in a temporary array
     readarray -t result_array < <(echo "$json_input" | jq -r '.collections[]')
 
-    # Export the array to a variable with a specified name
+    # Export the array into the variable with the provided name
     q=''
     for x in "${result_array[@]}"; do
         q+=$(printf ' %q' "$x")
@@ -113,7 +100,7 @@ extract_bruno_flags() {
     result=$(echo "$json_input" | jq -r '.flags | join(" ")')
     echo "➡️ Extracted Bruno flags: $result"
 
-    # Export the result to a variable with a specified name
+    # Export the result into the variable with the provided name
     eval "$output_var_name=\"$result\""
 }
 
@@ -133,7 +120,7 @@ extract_bruno_env_vars() {
     local count
     count=$(jq '.env_vars | length' <<< "$json_input")
 
-    # We go through the indices from 0 to count-1
+    # Iterate over indexes from 0 to count-1
     for ((i=0; i<count; i++)); do
         # Get the key by index
         local key
@@ -146,7 +133,7 @@ extract_bruno_env_vars() {
         # Remove single quotes added by @sh
         value=${value//\'/}
 
-        # Add to the result
+        # Append to the result
         result+=" --env-var $key=$value"
 
         # Debug output
@@ -155,7 +142,7 @@ extract_bruno_env_vars() {
 
     echo "➡️ Extracted Bruno env_vars: $result"
 
-    # Remove the first space and export the result
+    # Remove the leading space and export the result
     if [ -n "$output_var_name" ]; then
         eval "$output_var_name=\"${result# }\""
     else
