@@ -63,8 +63,8 @@ spec:
               value: "{{ .Values.MONITORING_ENABLED }}"
             - name: ATP_ENVGENE_CONFIGURATION
               valueFrom:
-                configMapKeyRef:
-                  name: {{ include "atp3-bruno-runner.fullname" . }}-cm
+                secretKeyRef:
+                  name: {{ include "atp3-bruno-runner.fullname" . }}-secret
                   key: atpEnvgeneConfiguration
             - name: TEST_PARAMS
               valueFrom:
