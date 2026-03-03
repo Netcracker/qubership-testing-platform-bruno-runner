@@ -4,11 +4,8 @@
     "description": "ATP3 Runner for Bruno collections with Allure reporting",
     "dependencies": {
         "@usebruno/cli": "2.10.0",
-        "allure": "3.0.0-beta.17",
+        "allure": "3.1.0",
         "uuid": "11.1.0",
         "axios": "1.12.0"
-    },
-    "overrides": {
-        "underscore": "1.12.1"
     }
 }
