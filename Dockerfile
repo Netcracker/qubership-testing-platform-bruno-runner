@@ -39,6 +39,8 @@ ENV NODE_PATH="/app/node_modules"
 COPY --chown=runner:runner tools/ /tools/
 RUN chmod -R 755 /tools
 
+COPY --chown=runner:runner tracing.js /app/tracing.js
+COPY --chown=runner:runner lib/ /app/lib/
 COPY --chown=runner:runner scripts/ /scripts/
 COPY --chown=runner:runner scripts/runtimes/bruno-setup.sh /scripts/runtime-setup.sh
 COPY --chown=runner:runner start_tests.sh /start_tests.sh
