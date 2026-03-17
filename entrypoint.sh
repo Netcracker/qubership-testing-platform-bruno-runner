@@ -2,17 +2,20 @@
 set -e
 
 source /tools/bru_tools.sh
+# Source tracing and logging first so all subsequent output carries a trace-id
+source /scripts/trace-init.sh
+source /scripts/logging.sh
 
-echo "ℹ️ Installed Bruno version: $(bru --version)"
+log "ℹ️ Installed Bruno version: $(bru --version)"
 
 # Main test job entrypoint script - coordinates all modules
-echo "🔧 Starting test job entrypoint script..."
-echo "📁 Working directory: $(pwd)"
-echo "📅 Timestamp: $(date)"
+log "🔧 Starting test job entrypoint script..."
+log "📁 Working directory: $(pwd)"
+log "📅 Timestamp: $(date)"
 
 # Set default upload method
 export UPLOAD_METHOD="${UPLOAD_METHOD:-sync}"
-echo "📤 Upload method: $UPLOAD_METHOD"
+log "📤 Upload method: $UPLOAD_METHOD"
 
 # Import modular components
 source /scripts/init.sh
@@ -23,7 +26,7 @@ source /scripts/upload-monitor.sh
 source /scripts/email-notification/generate-email-notification-json.sh
 
 # Execute main workflow
-echo "🚀 Starting test execution workflow..."
+log "🚀 Starting test execution workflow..."
 
 init_environment
 clone_repository
@@ -40,4 +43,4 @@ finalize_upload
 
 sleep 30
 
-echo "✅ Test job finished successfully!"
+log "✅ Test job finished successfully!"
