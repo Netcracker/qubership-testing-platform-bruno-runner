@@ -3,7 +3,6 @@ kind: ConfigMap
 metadata:
   name: {{ include "atp3-bruno-runner.fullname" . }}-cm
 data:
-  testParams:
-    CLOUD_PROTOCOL: {{ .Values.CLOUD_PROTOCOL | default "" | quote }}
-    CLOUD_PUBLIC_HOST: {{ .Values.CLOUD_PUBLIC_HOST | default "" | quote }}
-    CONSUL_PUBLIC_URL: {{ .Values.CONSUL_PUBLIC_URL | default "" | quote }}
+  CLOUD_PROTOCOL: {{ .Values.CLOUD_PROTOCOL | default "" | quote }}
+  CLOUD_PUBLIC_HOST: {{ .Values.CLOUD_PUBLIC_HOST | default "" | quote }}
+  CONSUL_PUBLIC_URL: {{ .Values.CONSUL_PUBLIC_URL | default "" | quote }}
