@@ -60,9 +60,11 @@ If you want to use custom runners or local run here is a list of parameters
 | Parameter | Type | Mandatory | Default value | Description                                                                               |
 |-----------|------|-----------|---------------|-------------------------------------------------------------------------------------------|
 | ENVIRONMENT_NAME | string | **yes** | `default` | Environment name (e.g., dev, test, prod).                                                 |
+| ENV_CONFIGURATION_TEMPLATE_FILENAME | string | no | `environment-configuration-template.json` | Environment configuration template file name used during runtime configuration rendering. |
 | ATP_TESTS_GIT_REPO_URL | string | **yes** | `""` | Git repository URL with test sources. https://<somegit>.com/<project>/<project>-tests.git |
 | ATP_TESTS_GIT_TOKEN | string | **yes** | `your-token` | Access token for private Git repositories with tests (propagated automatically).          |
 | TEST_PARAMS | json | **yes** | `{}` | Additional test parameters to pass to test runner.                                        |
+| ATP_ENVGENE_CONFIGURATION    | JSON     | no        | `{}`                | Additional test parameters (Systems) to pass to test runner from EnvGene.                 |
 | ATP_STORAGE_BUCKET | string | **yes** | `""` | S3 bucket name for uploading results.                                                     |
 | ATP_STORAGE_USERNAME | string | **yes** | `storage-access-key` | Access key for S3 bucket.                                                                 |
 | ATP_STORAGE_PASSWORD | string | **yes** | `storage-secret-key` | Secret key for S3 bucket.                                                                 |
@@ -73,6 +75,7 @@ If you want to use custom runners or local run here is a list of parameters
 | ATP_ENVGENE_CONFIGURATION | json | no | `{}` | Additional test parameters to pass to test runner from EnvGene.                           |
 | ATP_STORAGE_PROVIDER | string | no | `minio` | Type of S3 storage (e.g., minio, aws).                                                    |
 | ATP_STORAGE_REGION | string | no | `""` | S3 region (used by some providers).                                                       |
+| DEBUG_MODE                   | boolean  | no        | `false`             | Enable additional debug behavior and logs in runner scripts. |
 | CURRENT_DATE | string | no | `""` | Date to use in report naming (format: YYYY-MM-DD).                                        |
 | CURRENT_TIME | string | no | `""` | Time to use in report naming (format: HH:MM:SS).                                          |
 | ATP_RUNNER_JOB_TTL | integer | no | `3600` | Time-to-live for the test job in seconds.                                                 |
