@@ -30,7 +30,7 @@ source /scripts/upload-monitor.sh
 # shellcheck disable=SC1091
 source /scripts/email-notification/generate-email-notification-json.sh
 # shellcheck disable=SC1091
-source /bruno-native-report.sh
+source /scripts/native-report.sh
 # shellcheck disable=SC1091
 source /scripts/envgene.sh
 # shellcheck disable=SC1091
@@ -46,17 +46,10 @@ trap 'finalize_once' EXIT
 init_environment              || fail "Environment initialization failed"
 clone_repository              || fail "Repository clone failed"
 render_environment_configuration || fail "Render Environment Configuration Failed"
-load_envgene || fail "Load Envgen Failed"
+load_envgene                  || fail "Load Envgen Failed"
 setup_runtime_environment     || fail "Runtime setup failed"
 start_upload_monitoring
-run_tests
-
-
-init_environment
-clone_repository
-setup_runtime_environment
-start_upload_monitoring
-cp -f /start_tests.sh $TMP_DIR/start_tests.sh
+cp -f /start_tests.sh "$TMP_DIR/start_tests.sh"
 if ! local_run_enabled; then
     run_tests || fail "Test runner failed"
 else

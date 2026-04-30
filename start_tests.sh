@@ -71,10 +71,6 @@ for collection_dir in "${BRUNO_COLLECTIONS_ARRAY[@]}"; do
         # Return to previous directory
         popd > /dev/null
         # Convert Bruno JSON to Allure results
-        if ! local_run_enabled; then
-            node /tools/bruno-to-allure.js "${bruno_report_path}" "${PATH_TO_ALLURE_RESULTS}"
-        else
-            node $WORK_DIR/tools/bruno-to-allure.js "${bruno_report_path}" "${PATH_TO_ALLURE_RESULTS}"
-        fi
+        node /tools/bruno-to-allure.js "${bruno_report_path}" "${PATH_TO_ALLURE_RESULTS}"
     fi
 done
