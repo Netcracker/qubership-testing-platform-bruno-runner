@@ -5,8 +5,7 @@
     "scripts": {
         "test": "npm run test:static && npm run test:unit && npm run test:e2e",
         "test:static": "bash tests/static/run.sh",
-        "pretest:unit": "bash -c 'if [ ! -x tests/unit/_libs/bats-core/bin/bats ]; then echo \"Initializing bats submodules...\"; git submodule update --init --recursive tests/unit/_libs; fi'",
-        "test:unit": "bash -c 'tests/unit/_libs/bats-core/bin/bats tests/unit'",
+        "test:unit": "bats tests/unit/",
         "test:e2e": "bash tests/e2e/run.sh"
     },
     "dependencies": {
