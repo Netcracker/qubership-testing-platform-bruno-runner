@@ -47,7 +47,7 @@ for collection_dir in "${BRUNO_COLLECTIONS_ARRAY[@]}"; do
 
         # Print run command
         echo "📁 Running collection from: $collection_path"
-        echo "🚀 bru run ${BRUNO_FLAGS_CLI} --env ""${BRUNO_ENV_STR}"" ${BRUNO_REPORTERS} ""${html_report_path}"" ${BRUNO_ENV_VARS_CLI}"
+        echo "🚀 bru run ${BRUNO_FLAGS_CLI} --env \"${BRUNO_ENV_STR}\" ${BRUNO_REPORTERS} \"${bruno_report_path}\" ${BRUNO_ENV_VARS_CLI}"
         echo "➡️ Bruno report will be saved to: ${bruno_report_path}"
 
         # Change to collection directory
