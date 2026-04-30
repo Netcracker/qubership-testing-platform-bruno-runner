@@ -30,7 +30,7 @@ source /scripts/upload-monitor.sh
 # shellcheck disable=SC1091
 source /scripts/email-notification/generate-email-notification-json.sh
 # shellcheck disable=SC1091
-source /scripts/native-report.sh
+source /bruno-native-report.sh
 # shellcheck disable=SC1091
 source /scripts/envgene.sh
 # shellcheck disable=SC1091
@@ -38,10 +38,6 @@ source /scripts/render-environment-configuration.sh
 
 # Execute main workflow
 echo "🚀 Starting test execution workflow..."
-
-# Runner-specific report directory consumed by finalize_once() in error-handler.sh.
-# Override this in other runners (e.g. python-runner) before the trap fires.
-NATIVE_REPORT_DIR="bruno-report"
 
 # finalize_once() is defined in error-handler.sh (sourced above).
 # Register it here after all scripts are sourced so every function it calls is available.
