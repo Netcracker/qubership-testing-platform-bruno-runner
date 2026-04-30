@@ -29,3 +29,11 @@ podSecurityContext:
 containerSecurityContext: {}
 affinity: {}
 tolerations: []
+# Variables for render environment configuration template
+CLOUD_PROTOCOL: ""
+CLOUD_PUBLIC_HOST: ""
+DEFAULT_TENANT_NAME: ""
+DEFAULT_TENANT_ADMIN_LOGIN: ""
+DEFAULT_TENANT_ADMIN_PASSWORD: ""
+CONSUL_PUBLIC_URL: ""
+CONSUL_ADMIN_TOKEN: ""

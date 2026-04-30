@@ -21,7 +21,7 @@ extract_bruno_flags "$TEST_PARAMS" "BRUNO_FLAGS_CLI"
 echo "🚀 Launching Bruno collections"
 
 # Move into the temp directory
-cd $TMP_DIR
+cd "$TMP_DIR"
 
 # Prepare Bruno launch
 # Paths to results
@@ -47,17 +47,17 @@ for collection_dir in "${BRUNO_COLLECTIONS_ARRAY[@]}"; do
 
         # Print run command
         echo "📁 Running collection from: $collection_path"
-        echo "🚀 bru run ${BRUNO_FLAGS_CLI} --env "${BRUNO_ENV_STR}" ${BRUNO_REPORTERS} "${html_report_path}" ${BRUNO_ENV_VARS_CLI}"
+        echo "🚀 bru run ${BRUNO_FLAGS_CLI} --env \"${BRUNO_ENV_STR}\" ${BRUNO_REPORTERS} \"${bruno_report_path}\" ${BRUNO_ENV_VARS_CLI}"
         echo "➡️ Bruno report will be saved to: ${bruno_report_path}"
 
         # Change to collection directory
         pushd "$collection_path" > /dev/null
 
         # Run Bruno collection
-        if ! output=$(${BRU_BIN}/bru.js run ${BRUNO_FLAGS_CLI} \
+        if ! output=$("${BRU_BIN}"/bru.js run "${BRUNO_FLAGS_CLI}" \
             --env "${BRUNO_ENV_STR}" \
-            ${BRUNO_ENV_VARS_CLI} \
-            ${BRUNO_REPORTERS} "${bruno_report_path}" 2>&1);
+            "${BRUNO_ENV_VARS_CLI}" \
+            "${BRUNO_REPORTERS}" "${bruno_report_path}" 2>&1);
         then
             echo "Output:"
             echo "$output"
@@ -71,10 +71,6 @@ for collection_dir in "${BRUNO_COLLECTIONS_ARRAY[@]}"; do
         # Return to previous directory
         popd > /dev/null
         # Convert Bruno JSON to Allure results
-        if ! local_run_enabled; then
-            node /tools/bruno-to-allure.js "${bruno_report_path}" "${PATH_TO_ALLURE_RESULTS}"
-        else
-            node $WORK_DIR/tools/bruno-to-allure.js "${bruno_report_path}" "${PATH_TO_ALLURE_RESULTS}"
-        fi
+        node /tools/bruno-to-allure.js "${bruno_report_path}" "${PATH_TO_ALLURE_RESULTS}"
     fi
 done
