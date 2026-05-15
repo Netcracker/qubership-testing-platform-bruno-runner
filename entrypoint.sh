@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 
-source /tools/bru_tools.sh
 
 echo "ℹ️ Installed Bruno version: $(bru --version)"
 
@@ -15,6 +14,8 @@ export UPLOAD_METHOD="${UPLOAD_METHOD:-sync}"
 echo "📤 Upload method: $UPLOAD_METHOD"
 
 # Import modular components
+# shellcheck disable=SC1091
+source /scripts/tools/bru_tools.sh
 # shellcheck disable=SC1091
 source /scripts/error-handler.sh
 # shellcheck disable=SC1091
