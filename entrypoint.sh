@@ -50,11 +50,6 @@ render_environment_configuration || fail "Render Environment Configuration Faile
 load_envgene                  || fail "Load Envgen Failed"
 setup_runtime_environment     || fail "Runtime setup failed"
 start_upload_monitoring
-cp -f /start_tests.sh "$TMP_DIR/start_tests.sh"
-if ! local_run_enabled; then
-    run_tests || fail "Test runner failed"
-else
-    local_run_tests
-fi
+run_tests || fail "Test runner failed"
 
 echo "✅ Test job finished successfully!"
