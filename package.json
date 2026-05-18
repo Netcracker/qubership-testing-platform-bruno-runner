@@ -1,6 +1,6 @@
 {
     "name": "bruno-runner",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "ATP3 Runner for Bruno collections with Allure reporting",
     "dependencies": {
         "@usebruno/cli": "3.2.1",
