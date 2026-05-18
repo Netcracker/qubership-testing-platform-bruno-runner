@@ -38,6 +38,8 @@ source /scripts/envgene.sh
 source /scripts/render-environment-configuration.sh
 # shellcheck disable=SC1091
 source /scripts/parse-extra-vars.sh
+# shellcheck disable=SC1091
+source /scripts/test-runner-bruno.sh
 
 # Execute main workflow
 echo "🚀 Starting test execution workflow..."
