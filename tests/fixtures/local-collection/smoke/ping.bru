@@ -1,0 +1,17 @@
+meta {
+  name: ping
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/ping
+  body: none
+  auth: none
+}
+
+tests {
+  test("response received", function() {
+    expect(res.status).to.be.oneOf([200, 0]);
+  });
+}

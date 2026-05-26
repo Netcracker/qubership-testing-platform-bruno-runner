@@ -2,10 +2,21 @@
     "name": "bruno-runner",
     "version": "0.1.1",
     "description": "ATP3 Runner for Bruno collections with Allure reporting",
+       "scripts": {
+        "test": "npm run test:static && npm run test:unit && npm run test:e2e",
+        "test:static": "bash tests/static/run.sh",
+        "test:unit": "bats tests/unit/",
+        "test:e2e": "bash tests/e2e/run.sh"
+    },
     "dependencies": {
         "@usebruno/cli": "3.2.1",
         "allure": "3.1.0",
         "axios": "1.15.0",
         "uuid": "11.1.0"
+    },
+    "devDependencies": {
+        "bats": "1.13.0",
+        "bats-assert": "2.2.4",
+        "bats-support": "0.3.0"
     }
 }

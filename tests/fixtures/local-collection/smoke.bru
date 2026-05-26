@@ -1,0 +1,24 @@
+meta {
+  name: smoke
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/ping
+  body: none
+  auth: none
+}
+
+script:pre-request {
+  bru.setVar("ran", "yes");
+}
+
+tests {
+  test("marker variable is hello", function() {
+    expect(bru.getVar("marker")).to.equal("hello");
+  });
+  test("pre-request script ran", function() {
+    expect(bru.getVar("ran")).to.equal("yes");
+  });
+}
