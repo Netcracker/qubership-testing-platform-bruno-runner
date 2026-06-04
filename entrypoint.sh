@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 
-source /tools/bru_tools.sh
 
 echo "ℹ️ Installed Bruno version: $(bru --version)"
 
@@ -15,6 +14,8 @@ export UPLOAD_METHOD="${UPLOAD_METHOD:-sync}"
 echo "📤 Upload method: $UPLOAD_METHOD"
 
 # Import modular components
+# shellcheck disable=SC1091
+source /scripts/tools/bru_tools.sh
 # shellcheck disable=SC1091
 source /scripts/error-handler.sh
 # shellcheck disable=SC1091
@@ -35,6 +36,10 @@ source /scripts/native-report.sh
 source /scripts/envgene.sh
 # shellcheck disable=SC1091
 source /scripts/render-environment-configuration.sh
+# shellcheck disable=SC1091
+source /scripts/parse-extra-vars.sh
+# shellcheck disable=SC1091
+source /scripts/test-runner-bruno.sh
 
 # Execute main workflow
 echo "🚀 Starting test execution workflow..."
@@ -44,16 +49,12 @@ echo "🚀 Starting test execution workflow..."
 trap 'finalize_once' EXIT
 
 init_environment              || fail "Environment initialization failed"
+parse_extra_vars              || fail "EXTRA_VARS parsing failed"
 clone_repository              || fail "Repository clone failed"
 render_environment_configuration || fail "Render Environment Configuration Failed"
 load_envgene                  || fail "Load Envgen Failed"
 setup_runtime_environment     || fail "Runtime setup failed"
 start_upload_monitoring
-cp -f /start_tests.sh "$TMP_DIR/start_tests.sh"
-if ! local_run_enabled; then
-    run_tests || fail "Test runner failed"
-else
-    local_run_tests
-fi
+run_tests || fail "Test runner failed"
 
 echo "✅ Test job finished successfully!"

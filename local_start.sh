@@ -72,11 +72,6 @@ main() {
     exit 1
   fi
 
-  if [[ ! -f "start_tests.sh" ]]; then
-    echo "Error: start_tests.sh not found in the current directory!" >&2
-    exit 1
-  fi
-
   ./entrypoint.sh
 }
 

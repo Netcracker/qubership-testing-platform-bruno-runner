@@ -10,6 +10,8 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.22/community/" >/etc/apk/repo
       jq=1.8.1-r0 \
       tar=1.35-r3 \
       unzip \
+      git \
+      file \
       inotify-tools \
       nano && \
     rm -rf /var/cache/apk/*
@@ -37,10 +39,8 @@ ENV BRU_BIN="/app/node_modules/@usebruno/cli/bin"
 ENV PATH="/app/node_modules/.bin:${PATH}"
 ENV NODE_PATH="/app/node_modules"
 
-COPY --chown=runner:runner --chmod=755 tools/   /tools/
 COPY --chown=runner:runner --chmod=755 scripts/ /scripts/
 COPY --chown=runner:runner scripts/runtimes/bruno-setup.sh /scripts/runtime-setup.sh
-COPY --chown=runner:runner --chmod=755 start_tests.sh /start_tests.sh
 COPY --chown=runner:runner --chmod=755 entrypoint.sh /app/entrypoint.sh
 
 USER 1007
