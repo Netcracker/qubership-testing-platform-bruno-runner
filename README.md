@@ -48,6 +48,9 @@ When running it's implicitly uses all [Deploy parameters](#deploy-parameters) it
 | ENABLE_JIRA_INTEGRATION   | string | yes       | `false`                                              | Activates Jira Integration                                                   |
 | NOTIFICATION_RECIPIENTS   | string | yes       | `someEmail@no-reply.com`                             | Emails of test result recipients                                             |
 | EXTRA_VARS                | string | no        | `""`                                                 | Additional environment variables to be injected into the runner environment. |
+| podSecurityContext                  | object  | no        | `{ runAsUser: 1000, fsGroup: 1000 }`      | Kubernetes pod-level security context for the runner Job. Applied when `SECURITY_CONTEXT_ENABLED=true`. Sets UID/GID for pod processes and volume file ownership.                                                                                            |
+| TRIGGER_AUTHOR                      | string  | no        | `""`                                      | Optional technical parameter. Used to display the test run author in the report.                                                                                                                                                                             |
+| ATP_APPLICATION_VERSION             | string  | no        | `""`                                      | Optional technical parameter. Runner version; propagated to the runner pod for reports and test run metadata.                                                                                                                          |
 
 ## Manual run
 
