@@ -1,5 +1,6 @@
 DOCKER_TAG: ""
 ENVIRONMENT_NAME: "default"
+ENV_CONFIGURATION_TEMPLATE_FILENAME: "environment-configuration-template.json"
 ATP_TESTS_GIT_REPO_URL: ""
 ATP_TESTS_GIT_REPO_BRANCH: main
 ATP_TESTS_GIT_TOKEN: "your-token"
