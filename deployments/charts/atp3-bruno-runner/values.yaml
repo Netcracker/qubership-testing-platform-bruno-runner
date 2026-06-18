@@ -21,7 +21,6 @@ ATP_ENVGENE_CONFIGURATION: {}
 ENABLE_JIRA_INTEGRATION: false
 MONITORING_ENABLED: true
 TRIGGER_AUTHOR: ""
-ATP_APPLICATION_VERSION: ""
 # Security Context properties
 # enabled is a flag to enable Security Context
 SECURITY_CONTEXT_ENABLED: false
