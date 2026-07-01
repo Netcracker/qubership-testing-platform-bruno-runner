@@ -1,23 +1,25 @@
 # Bruno Collections Runner
+
+## Table of Contents
+
 - [Overview](#overview)
 - [Atlas-atp3-pipeline Run](#atlas-atp3-pipeline-run)
-- [Manual run](#manual-run)
-- [Deploy parameters](#deploy-parameters)
+- [Manual Run](#manual-run)
+- [Deploy Parameters](#deploy-parameters)
 - [Hardware / Resource Requirements (HWE)](#hardware--resource-requirements-hwe)
-- [Description of CI/CD process](#description-of-cicd-process)
-  - [Main flow](#main-flow)
-  - [TEST_PARAMS description](#test_params-description)
-  - [TEST_PARAMS Example](#test_params-example)
+- [How to Set Global Environment File](#how-to-set-global-environment-file)
+- [Description of CI/CD Process](#description-of-cicd-process)
+  - [Main Flow](#main-flow)
 - [Reporting](#reporting)
 - [Local Build](#local-build)
-  - [1) Prerequisites](#1-prerequisites)
-  - [2) Install CLI utilities: `jq` and `s5cmd`](#2-install-cli-utilities-jq-and-s5cmd)
-  - [3) Install project dependencies](#3-install-project-dependencies)
-  - [4) Troubleshooting](#4-troubleshooting)
-- [Local Run Collections without S3 allure report (via `local_start.sh`)](#local-run-collections-without-s3-allure-report-via-local_startsh)
-  - [Pre-step: Prepare test data (REQUIRED)](#pre-step-prepare-test-data-required)
-- [Local Run Collections with S3 allure report (via `local_start.sh`)](#local-run-collections-with-s3-allure-report-via-local_startsh)
-  - [Pre-step: Prepare test data (REQUIRED)](#pre-step-prepare-test-data-required-with-s3)
+  - [1. Prerequisites](#1-prerequisites)
+  - [2. Install CLI Utilities: `jq` and `s5cmd`](#2-install-cli-utilities-jq-and-s5cmd)
+  - [3. Install Project Dependencies](#3-install-project-dependencies)
+  - [4. Troubleshooting](#4-troubleshooting)
+- [Local Run Collections Without S3 Allure Report (via `local_start.sh`)](#local-run-collections-without-s3-allure-report-via-local_startsh)
+  - [Pre-step: Prepare Test Data (REQUIRED)](#pre-step-prepare-test-data-required)
+- [Local Run Collections With S3 Allure Report (via `local_start.sh`)](#local-run-collections-with-s3-allure-report-via-local_startsh)
+  - [Pre-step: Prepare Test Data (REQUIRED)](#pre-step-prepare-test-data-required-with-s3)
   - [Quick Start](#quick-start)
 
 
@@ -126,7 +128,7 @@ Specifies the name of a Bruno global environment file (e.g., `debug`) to use whe
 
 Suppose your project structure is:
 
-```
+```text
 <repository-name>/
 ├── collections/
 ├── environments/
@@ -137,11 +139,11 @@ Suppose your project structure is:
 
 To use `debug.bru` (which defines global variables or settings for your collections):
 
-**Note:**  
+**Note:**
 - You do not need to specify the file extension `.yml` 
 - If not set, the runner will skip adding a global environment.
 
-For more about global environments in Bruno: see the [Bruno documentation](https://docs.usebruno.com/environment/global-environment/)
+For more about global environments in Bruno: see the [Bruno documentation](https://docs.usebruno.com/variables/global-environment-variables)
 
 ### BRUNO_WORKSPACE_PATH
 
@@ -150,7 +152,7 @@ This environment variable specifies the path to your Bruno workspace directory. 
 **How to use:**
 - Set `BRUNO_WORKSPACE_PATH` to the relative or absolute path of the folder containing your `workspace.yml` and `collections/`.
 - For example, if your directory structure is:
-  ```
+  ```text
   <repository-name>/
   ├── subdir/
   │   ├── workspace.yml
