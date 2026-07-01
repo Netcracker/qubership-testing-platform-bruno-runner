@@ -192,6 +192,7 @@ flowchart TD
     end
 ```
 
+
 ## Reporting
 
 During the collection run, reports are generated in three formats: CLI, JSON, and Allure.
