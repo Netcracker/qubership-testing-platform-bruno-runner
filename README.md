@@ -69,6 +69,8 @@ If you want to use custom runners or local run here is a list of parameters
 | BRUNO_ENV                           | string  | no        | `""`                                      | Name of Bruno environment to use (e.g., envoriment-template.bru).                                                                                                       |
 | BRUNO_FLAGS                         | string  | no        | `--insecure`                              | Extra flags to pass to the Bruno CLI when running collections. For example, `--insecure --r`.                                                                           |
 | BRUNO_FOLDERS                       | string  | no        | ``                                        | Pipe-separated list of folders inside the `collections/` directory. If set, only these collections will be run.<br>Example: `BRUNO_FOLDERS="collectionA\|collectionB"`. |
+| BRUNO_GLOBAL_ENV                   | string  | no        | `""`                                      | Name of Bruno global environment file stored in the environments directory. For usage, see [How to set Global environment file](#how-to-set-global-environment-file). |
+| BRUNO_WORKSPACE_PATH                | string  | no        | `""`                                      | Workspace path for Bruno runner. For usage, see [How to set Global environment file](#how-to-set-global-environment-file). |
 | ATP_ENVGENE_CONFIGURATION           | JSON    | no        | `{}`                                      | Additional test parameters (Systems) to pass to test runner from EnvGene.                                                                                               |
 | ATP_STORAGE_BUCKET                  | string  | **yes**   | `""`                                      | S3 bucket name for uploading results.                                                                                                                                   |
 | ATP_STORAGE_USERNAME                | string  | **yes**   | `storage-access-key`                      | Access key for S3 bucket.                                                                                                                                               |
@@ -104,6 +106,70 @@ Supported 2 profiles: `dev`, `prod`.
 | CPU_REQUEST      | 100m   | 300m   |
 | CPU_LIMIT        | 500m   | 1000m  |
 
+## How to set Global environment file
+
+### BRUNO_GLOBAL_ENV
+
+> TO USE THIS FEATURE PLEASE ADD workspace.yml file to your repository (more details and an example is below)
+
+Specifies the name of a Bruno global environment file (e.g., `debug`) to use when running collections. The environment file should exist in the `environments/` directory within your Bruno workspace.
+
+**Usage:**
+
+- Set the environment variable in EXTRA_VARS
+  `BRUNO_GLOBAL_ENV=debug`
+
+- The specified file `debug.yml` must be located under `environments/` inside your workspace path.
+- You may combine `BRUNO_GLOBAL_ENV` with `BRUNO_WORKSPACE_PATH` if your environments directory is not in the root folder.
+
+**Example:**
+
+Suppose your project structure is:
+
+```
+<repository-name>/
+├── collections/
+├── environments/
+│   ├── default.yml
+│   └── debug.yml
+└── workspace.yml
+```
+
+To use `debug.bru` (which defines global variables or settings for your collections):
+
+**Note:**  
+- You do not need to specify the file extension `.yml` 
+- If not set, the runner will skip adding a global environment.
+
+For more about global environments in Bruno: see the [Bruno documentation](https://docs.usebruno.com/environment/global-environment/)
+
+### BRUNO_WORKSPACE_PATH
+
+This environment variable specifies the path to your Bruno workspace directory. The workspace directory must contain your `workspace.yml`, as well as your `collections/` and `environments/` directories. Use this variable when the default workspace location (usually the root of the repository) does not match where your Bruno project files are stored.
+
+**How to use:**
+- Set `BRUNO_WORKSPACE_PATH` to the relative or absolute path of the folder containing your `workspace.yml` and `collections/`.
+- For example, if your directory structure is:
+  ```
+  <repository-name>/
+  ├── subdir/
+  │   ├── workspace.yml
+  │   ├── collections/
+  │   └── environments/
+  ```
+  Set `BRUNO_WORKSPACE_PATH=../..` or `BRUNO_WORKSPACE_PATH=subdir`
+- This allows the runner to locate your workspace and environments correctly regardless of where they are in your repository.
+
+> If you do not set `BRUNO_WORKSPACE_PATH`, the runner will assume the workspace is in the root directory by default.
+
+**Common use-cases:**
+- Monorepos or projects with nested structures.
+- Working with multiple Bruno projects in a single repository.
+- Custom layouts for project organization.
+
+**Troubleshooting Tips:**
+- Ensure `workspace.yml` and `collections/` and `environments/` live inside the directory you specify.
+- If you see errors about missing workspace or collection files, double-check your path and directory structure.
 
 ## Description of CI/CD process
 
@@ -124,48 +190,6 @@ flowchart TD
         runner_step5["Generate email notification"] -->
         runner_step6["print Result/Report URLs (finalize_upload)"]
     end
-```
-#### TEST_PARAMS description
-
-For Bruno runner it's required to set TEST_PARAMS inside CUSTOM_PARAMS.
-`TEST_PARAMS` is a JSON object with the following supported keys:
-
-| Parameter   | Type          | Mandatory | Default value | Description                                                                                                                                         |
-|-------------|---------------|-----------|---------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
-| collections | array[string] | yes       | `[]`          | List of **relative paths** to Bruno collection directories that will be executed (each entry is used as `bru run <collection>`).                    |
-| env         | string        | yes       | `""`          | Bruno environment name/path passed to `bru run --env "<env>"`. If the value ends with `.bru`, the runner strips the extension.                      |
-| env_vars    | object        | no        | `{}`          | Environment variables passed to Bruno as `--env-var key=value` (one per entry).                                                                     |
-| flags       | array[string] | no        | `[]`          | Extra Bruno CLI flags. The runner joins the array with spaces (example: `["--insecure","--iteration-count 1"]` → `--insecure --iteration-count 1`). |
-
-Use collection to set path to test collection. You can use several collections separated with `,`
-Use env to set environment file which is in environment folder inside collection
-
-##### TEST_PARAMS Example
-
-```json
-{
-    "env_vars": {
-        "DB_NAME_PREFIX": "db-12345",
-        "KAFKA_PROJECT": "kafka_temp",
-        "NAMESPACE": "systems_under_test",
-        "SERVER_HOSTNAME": "project.cloud.somedomain.com",
-        "SERVER_PORT": "6443",
-        "cluster": ".k8s-apps5.k8s.sdntest.somedomain.com"
-    },
-    "env": "mockserver",
-    "collections": [
-        "collections/Project stubs",
-        "collections/Project_collection"
-    ],
-    "flags": [
-        "--insecure",
-        "--iteration-count 1"
-    ]
-}
-```
-The same example appropriate for atlas-atp3-runner:
-```text
-TEST_PARAMS='{"env_vars":{"DB_NAME_PREFIX":"db-12345","KAFKA_PROJECT":"kafka_temp","NAMESPACE":"systems_under_test","SERVER_HOSTNAME":"project.cloud.somedomain.com","SERVER_PORT":"6443","cluster":".k8s-apps5.k8s.sdntest.somedomain.com"},"env":"mockserver","collections":["collections/test","collections/Project_collection"],"flags":["--insecure","--iteration-count 1"]};'
 ```
 
 ## Reporting
