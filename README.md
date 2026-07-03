@@ -140,7 +140,7 @@ Suppose your project structure is:
 To use `debug.bru` (which defines global variables or settings for your collections):
 
 **Note:**
-- You do not need to specify the file extension `.yml` 
+- You do not need to specify the file extension `.yml`
 - If not set, the runner will skip adding a global environment.
 
 For more about global environments in Bruno: see the [Bruno documentation](https://docs.usebruno.com/variables/global-environment-variables)
