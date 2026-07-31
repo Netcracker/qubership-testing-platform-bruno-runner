@@ -11,6 +11,7 @@
 - [Description of CI/CD Process](#description-of-cicd-process)
   - [Main Flow](#main-flow)
 - [Reporting](#reporting)
+- [Bruno V4 migration](#bruno-v4-migration)
 - [Local Build](#local-build)
   - [1. Prerequisites](#1-prerequisites)
   - [2. Install CLI Utilities: `jq` and `s5cmd`](#2-install-cli-utilities-jq-and-s5cmd)
@@ -202,6 +203,19 @@ During the collection run, reports are generated in three formats: CLI, JSON, an
 - CLI - Performs logging to the console. Required for local debugging of the service itself, as well as debugging of the collection.
 - JSON - This is a built-in Bruno logger that writes results to a JSON file. It is convenient for automated parsing of results.
 - Allure - A system for visually displaying the results of collection runs. Ideal for visual analysis of automated test results by humans.
+
+## Bruno V4 migration
+
+This runner uses `@usebruno/cli` 4.0.0 and continues to run collections with `--env` and `--reporter-json`; it does not consume Bruno JUnit output.
+
+Before moving a collection repository to Bruno V4:
+
+1. Coordinate the desktop/client upgrade across the team. V4 descriptions, typed variables, migrated secrets, and YAML WebSocket multi-message requests can be incompatible with older clients.
+2. If the collection uses a root `secrets.json`, open it in the Bruno V4 desktop app. The app moves its configuration into the selected environment's `externalSecrets` section; the CLI does not perform this migration. Continue passing the environment through `BRUNO_ENV`.
+3. Audit scripts using `bru.setEnvVar`, `bru.deleteEnvVar`, and `bru.setGlobalEnvVar`. V4 persists these changes to disk. Replace operations handling credentials, tokens, or API keys with `bru.setVar` / `bru.deleteVar` so the values remain in memory.
+4. Replace deprecated `{{$secrets.name.key}}` references with `{{name.key}}` within Bruno's three-month compatibility window.
+
+The V4 JUnit `classname` change does not affect this runner: it parses Bruno JSON and emits Allure results. See [BRUNO-V4-IMPACT.md](BRUNO-V4-IMPACT.md) for the complete compatibility reference.
 
 ## Local Build
 

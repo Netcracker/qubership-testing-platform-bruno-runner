@@ -2,8 +2,12 @@
     "name": "bruno-runner",
     "version": "0.1.1",
     "description": "ATP3 Runner for Bruno collections with Allure reporting",
+    "scripts": {
+        "test": "node test/bruno-to-allure.test.js",
+        "smoke:v4": "node test/smoke-v4.js"
+    },
     "dependencies": {
-        "@usebruno/cli": "3.2.1",
+        "@usebruno/cli": "4.0.0",
         "allure": "3.1.0",
         "axios": "1.15.0",
         "uuid": "11.1.0"
