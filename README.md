@@ -215,7 +215,7 @@ Before moving a collection repository to Bruno V4:
 3. Audit scripts using `bru.setEnvVar`, `bru.deleteEnvVar`, and `bru.setGlobalEnvVar`. V4 persists these changes to disk. Replace operations handling credentials, tokens, or API keys with `bru.setVar` / `bru.deleteVar` so the values remain in memory.
 4. Replace deprecated `{{$secrets.name.key}}` references with `{{name.key}}` within Bruno's three-month compatibility window.
 
-The V4 JUnit `classname` change does not affect this runner: it parses Bruno JSON and emits Allure results. See [BRUNO-V4-IMPACT.md](BRUNO-V4-IMPACT.md) for the complete compatibility reference.
+The V4 JUnit `classname` change does not affect this runner: it parses Bruno JSON and emits Allure results.
 
 ## Local Build
 
