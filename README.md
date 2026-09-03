@@ -50,7 +50,6 @@ When running it's implicitly uses all [Deploy parameters](#deploy-parameters) it
 | ENABLE_JIRA_INTEGRATION   | string | yes       | `false`                                              | Activates Jira Integration                                                   |
 | NOTIFICATION_RECIPIENTS   | string | yes       | `someEmail@no-reply.com`                             | Emails of test result recipients                                             |
 | EXTRA_VARS                | string | no        | `""`                                                 | Additional environment variables to be injected into the runner environment. |
-| podSecurityContext                  | object  | no        | `{ runAsUser: 1000, fsGroup: 1000 }`      | Kubernetes pod-level security context for the runner Job. Applied when `SECURITY_CONTEXT_ENABLED=true`. Sets UID/GID for pod processes and volume file ownership.                                                                                            |
 | TRIGGER_AUTHOR                      | string  | no        | `""`                                      | Optional technical parameter. Used to display the test run author in the report.                                                                                                                                                                             |
 
 ## Manual run
@@ -91,11 +90,14 @@ If you want to use custom runners or local run here is a list of parameters
 | ATP_RUNNER_JOB_EXIT_STRATEGY        | string  | no        | `EXIT_ALWAYS`                             | Exit strategy for the runner job.                                                                                                                                       |
 | ENABLE_JIRA_INTEGRATION             | boolean | no        | `false`                                   | Enable Jira integration for tests.                                                                                                                                      |
 | MONITORING_ENABLED                  | boolean | no        | `true`                                    | Enable monitoring for the runner.                                                                                                                                       |
-| SECURITY_CONTEXT_ENABLED            | boolean | no        | `false`                                   | Flag to enable or disable the security context for the Playwright Runner service.                                                                                       |
-| podSecurityContext                  | object  | no        | `{ runAsUser: 1000, fsGroup: 1000 }`      | Pod-level security context settings.                                                                                                                                    |
-| containerSecurityContext            | object  | no        | `{}`                                      | Container-level security context settings.                                                                                                                              |
-| affinity                            | object  | no        | `{}`                                      | Pod affinity rules.                                                                                                                                                     |
-| tolerations                         | array   | no        | `[]`                                      | Pod tolerations.                                                                                                                                                        |
+| POD_SECURITY_CONTEXT                | object  | no        | `{ runAsUser: 1007, fsGroup: 1007 }`      | UID/GID pin merged with chart defaults (`runAsNonRoot`, `seccompProfile`). `runAsUser`/`runAsGroup`/`fsGroup` are omitted when Helm sees `security.openshift.io/v1` (OpenShift `restricted-v2`). Always applied to the runner Job. |
+| CONTAINER_SECURITY_CONTEXT          | object  | no        | `{}`                                      | Optional overrides merged with chart defaults (`allowPrivilegeEscalation: false`, drop `ALL`). Always applied to the runner Job. |
+| AFFINITY                            | object  | no        | `{}`                                      | Pod affinity rules.                                                                                                                                                     |
+| TOLERATIONS                         | array   | no        | `[]`                                      | Pod tolerations.                                                                                                                                                        |
+
+The Job always gets a pod and container `securityContext` (`runAsNonRoot`, `RuntimeDefault` seccomp, drop `ALL` capabilities). On vanilla Kubernetes, `POD_SECURITY_CONTEXT` pins UID/GID **1007** (same as the image `USER`). 
+
+On OpenShift Helm detects `security.openshift.io/v1` and omits `runAsUser`/`runAsGroup`/`fsGroup` so `restricted-v2` can assign the project UID range. Offline `helm template` without `--api-versions security.openshift.io/v1` looks like Kubernetes and keeps the UID pin.
 
 ## Hardware / Resource Requirements (HWE)
 

@@ -8,30 +8,26 @@ spec:
   ttlSecondsAfterFinished: {{ .Values.ATP_RUNNER_JOB_TTL }}
   template:
     spec:
-      {{- if .Values.SECURITY_CONTEXT_ENABLED }}
       securityContext:
-        {{- include "securityContext.pod" . | nindent 12 }}
+        {{- include "securityContext.pod" . | nindent 8 }}
+      {{- if .Values.AFFINITY }}
+      affinity: {{- toYaml .Values.AFFINITY | nindent 8 }}
       {{- end }}
-      {{- if .Values.affinity }}
-      affinity: {{- toYaml .Values.affinity | nindent 8 }}
-      {{- end }}
-      {{- if .Values.tolerations }}
-      tolerations: {{- toYaml .Values.tolerations | nindent 8 }}
+      {{- if .Values.TOLERATIONS }}
+      tolerations: {{- toYaml .Values.TOLERATIONS | nindent 8 }}
       {{- end }}
       containers:
         - name: atp3-bruno-runner
           image: '{{ .Values.DOCKER_TAG }}'
-          resources:
-            requests:
-              memory: '{{ .Values.MEMORY_REQUEST }}'
-              cpu: '{{ .Values.CPU_REQUEST }}'
-            limits:
-              memory: '{{ .Values.MEMORY_LIMIT }}'
-              cpu: '{{ .Values.CPU_LIMIT }}'
-          {{- if .Values.SECURITY_CONTEXT_ENABLED }}
           securityContext:
             {{- include "securityContext.container" . | nindent 12 }}
-          {{- end }}
+          resources:
+            requests:
+              memory: '{{ .Values.MEMORY_REQUEST | default "100Mi" }}'
+              cpu: '{{ .Values.CPU_REQUEST | default "100m" }}'
+            limits:
+              memory: '{{ .Values.MEMORY_LIMIT | default "1000Mi" }}'
+              cpu: '{{ .Values.CPU_LIMIT | default "500m" }}'
           env:
             - name: ATP_TESTS_GIT_REPO_URL
               value: "{{ .Values.ATP_TESTS_GIT_REPO_URL }}"
