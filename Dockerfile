@@ -1,6 +1,7 @@
 FROM node:20-alpine
 
 ENV HOME_EX=/app
+ENV HOME=/app
 
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.22/community/" >/etc/apk/repositories && \
     echo "https://dl-cdn.alpinelinux.org/alpine/v3.22/main/" >>/etc/apk/repositories && \
@@ -42,6 +43,10 @@ ENV NODE_PATH="/app/node_modules"
 COPY --chown=runner:runner --chmod=755 scripts/ /scripts/
 COPY --chown=runner:runner scripts/runtimes/bruno-setup.sh /scripts/runtime-setup.sh
 COPY --chown=runner:runner --chmod=755 entrypoint.sh /app/entrypoint.sh
+
+RUN chgrp -R 0 /app /scripts \
+    && chmod -R g=u /app /scripts \
+    && chmod g+rx /app /scripts
 
 USER 1007
 
