@@ -50,7 +50,6 @@ When running it's implicitly uses all [Deploy parameters](#deploy-parameters) it
 | ENABLE_JIRA_INTEGRATION   | string | yes       | `false`                                              | Activates Jira Integration                                                   |
 | NOTIFICATION_RECIPIENTS   | string | yes       | `someEmail@no-reply.com`                             | Emails of test result recipients                                             |
 | EXTRA_VARS                | string | no        | `""`                                                 | Additional environment variables to be injected into the runner environment. |
-| POD_SECURITY_CONTEXT                | object  | no        | `{ runAsUser: 1007, fsGroup: 1007 }`      | UID/GID pin merged with chart defaults (`runAsNonRoot`, `seccompProfile`). `runAsUser`/`runAsGroup`/`fsGroup` are omitted when Helm sees `security.openshift.io/v1`. Always applied to the runner Job. |
 | TRIGGER_AUTHOR                      | string  | no        | `""`                                      | Optional technical parameter. Used to display the test run author in the report.                                                                                                                                                                             |
 
 ## Manual run
