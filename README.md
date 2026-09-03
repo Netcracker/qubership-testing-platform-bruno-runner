@@ -95,7 +95,9 @@ If you want to use custom runners or local run here is a list of parameters
 | AFFINITY                            | object  | no        | `{}`                                      | Pod affinity rules.                                                                                                                                                     |
 | TOLERATIONS                         | array   | no        | `[]`                                      | Pod tolerations.                                                                                                                                                        |
 
-The Job always gets a pod and container `securityContext` (`runAsNonRoot`, `RuntimeDefault` seccomp, drop `ALL` capabilities). On vanilla Kubernetes, `POD_SECURITY_CONTEXT` pins UID/GID **1007** (same as the image `USER`). On OpenShift Helm detects `security.openshift.io/v1` and omits `runAsUser`/`runAsGroup`/`fsGroup` so `restricted-v2` can assign the project UID range. Offline `helm template` without `--api-versions security.openshift.io/v1` looks like Kubernetes and keeps the UID pin.
+The Job always gets a pod and container `securityContext` (`runAsNonRoot`, `RuntimeDefault` seccomp, drop `ALL` capabilities). On vanilla Kubernetes, `POD_SECURITY_CONTEXT` pins UID/GID **1007** (same as the image `USER`). 
+
+On OpenShift Helm detects `security.openshift.io/v1` and omits `runAsUser`/`runAsGroup`/`fsGroup` so `restricted-v2` can assign the project UID range. Offline `helm template` without `--api-versions security.openshift.io/v1` looks like Kubernetes and keeps the UID pin.
 
 ## Hardware / Resource Requirements (HWE)
 
