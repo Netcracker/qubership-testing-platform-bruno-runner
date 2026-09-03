@@ -8,6 +8,7 @@
 - [Deploy Parameters](#deploy-parameters)
 - [Hardware / Resource Requirements (HWE)](#hardware--resource-requirements-hwe)
 - [How to Set Global Environment File](#how-to-set-global-environment-file)
+- [How to Filter Requests by Tags](#how-to-filter-requests-by-tags)
 - [Description of CI/CD Process](#description-of-cicd-process)
   - [Main Flow](#main-flow)
 - [Reporting](#reporting)
@@ -71,6 +72,7 @@ If you want to use custom runners or local run here is a list of parameters
 | BRUNO_ENV                           | string  | no        | `""`                                      | Name of Bruno environment to use (e.g., envoriment-template.bru).                                                                                                       |
 | BRUNO_FLAGS                         | string  | no        | `--insecure`                              | Extra flags to pass to the Bruno CLI when running collections. For example, `--insecure --r`.                                                                           |
 | BRUNO_FOLDERS                       | string  | no        | ``                                        | Pipe-separated list of folders inside the `collections/` directory. If set, only these collections will be run.<br>Example: `BRUNO_FOLDERS="collectionA\|collectionB"`. |
+| BRUNO_TAGS                          | string  | no        | ``                                        | Pipe-separated Bruno request tags passed to `bru run --tags` (pipe is required because EXTRA_VARS splits on comma).<br>Example: `BRUNO_TAGS=smoke` or `BRUNO_TAGS=smoke\|sanity`. |
 | BRUNO_GLOBAL_ENV                   | string  | no        | `""`                                      | Name of Bruno global environment file stored in the environments directory. For usage, see [How to set Global environment file](#how-to-set-global-environment-file). |
 | BRUNO_WORKSPACE_PATH                | string  | no        | `""`                                      | Workspace path for Bruno runner. For usage, see [How to set Global environment file](#how-to-set-global-environment-file). |
 | ATP_ENVGENE_CONFIGURATION           | JSON    | no        | `{}`                                      | Additional test parameters (Systems) to pass to test runner from EnvGene.                                                                                               |
@@ -172,6 +174,31 @@ This environment variable specifies the path to your Bruno workspace directory. 
 **Troubleshooting Tips:**
 - Ensure `workspace.yml` and `collections/` and `environments/` live inside the directory you specify.
 - If you see errors about missing workspace or collection files, double-check your path and directory structure.
+
+## How to Filter Requests by Tags
+
+Set `BRUNO_TAGS` in EXTRA_VARS to pass `--tags` to Bruno CLI. Use `|` to list multiple tags — EXTRA_VARS splits entries on comma, the same constraint as `BRUNO_FOLDERS`.
+
+```text
+EXTRA_VARS=BRUNO_TAGS=smoke
+EXTRA_VARS=BRUNO_TAGS=smoke|sanity
+```
+
+The runner converts the pipe-separated list to Bruno's CLI form (`bru run --tags smoke,sanity`). Bruno requires a request to have **all** listed tags. Tag filtering can be combined with `BRUNO_FOLDERS`.
+
+Requests must declare tags in the `.bru` `meta` block:
+
+```text
+meta {
+  name: Get users
+  type: http
+  seq: 1
+  tags: [
+    smoke
+    sanity
+  ]
+}
+```
 
 ## Description of CI/CD process
 
