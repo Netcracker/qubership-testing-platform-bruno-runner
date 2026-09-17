@@ -8,6 +8,7 @@
 - [Deploy Parameters](#deploy-parameters)
 - [Hardware / Resource Requirements (HWE)](#hardware--resource-requirements-hwe)
 - [How to Set Global Environment File](#how-to-set-global-environment-file)
+- [OpenTelemetry (B3) Trace Headers](#opentelemetry-b3-trace-headers)
 - [Description of CI/CD Process](#description-of-cicd-process)
   - [Main Flow](#main-flow)
 - [Reporting](#reporting)
@@ -67,6 +68,8 @@ If you want to use custom runners or local run here is a list of parameters
 | ATP_TESTS_GIT_REPO_URL              | string  | **yes**   | `""`                                      | Git repository URL with test sources. https://<somegit>.com/<project>/<project>-tests.git                                                                               |
 | ATP_TESTS_GIT_TOKEN                 | string  | **yes**   | `your-token`                              | Access token for private Git repositories with tests (propagated automatically).                                                                                        |
 | TEST_PARAMS                         | JSON    | **yes**   | `{}`                                      | Test parameters with information about test suite.                                                                                                                      |
+| PROJECT_ID                          | string  | **yes**   | `""`                                      | Project identifier from the orchestrator, used as-is in the `X-B3-TraceId` header. See [OpenTelemetry (B3) trace headers](#opentelemetry-b3-trace-headers). |
+| RUN_ID                              | string  | **yes**   | `""`                                      | Test run identifier from the orchestrator, used as-is in the `X-B3-TraceId` header. See [OpenTelemetry (B3) trace headers](#opentelemetry-b3-trace-headers). |
 | BRUNO_ENV                           | string  | no        | `""`                                      | Name of Bruno environment to use (e.g., envoriment-template.bru).                                                                                                       |
 | BRUNO_FLAGS                         | string  | no        | `--insecure`                              | Extra flags to pass to the Bruno CLI when running collections. For example, `--insecure --r`.                                                                           |
 | BRUNO_FOLDERS                       | string  | no        | ``                                        | Pipe-separated list of folders inside the `collections/` directory. If set, only these collections will be run.<br>Example: `BRUNO_FOLDERS="collectionA\|collectionB"`. |
@@ -174,6 +177,27 @@ This environment variable specifies the path to your Bruno workspace directory. 
 **Troubleshooting Tips:**
 - Ensure `workspace.yml` and `collections/` and `environments/` live inside the directory you specify.
 - If you see errors about missing workspace or collection files, double-check your path and directory structure.
+
+## OpenTelemetry (B3) trace headers
+
+The runner stamps every request in a collection with B3 trace headers, so a tail-sampling collector can group the
+calls one collection makes under a single trace.
+
+| Header         | Value                                               | Scope                                        |
+|----------------|------------------------------------------------------|-----------------------------------------------|
+| `X-B3-TraceId` | `<PROJECT_ID><RUN_ID><testcase_id>` (13 characters) | Fixed for the whole collection run             |
+| `X-B3-SpanId`  | 16 lowercase hex characters                          | Fresh on every request                         |
+| `X-B3-Sampled` | `1`                                                  | Always                                         |
+
+`PROJECT_ID` and `RUN_ID` are used as-is from the orchestrator; `testcase_id` is a random 5-character hex value the
+runner generates once per collection run, since one Bruno collection is one test case.
+
+No change to your collection is required. Before each run, the runner injects a `script:pre-request` block into a
+temporary copy of `collection.bru`, alongside any pre-request script your collection already defines, so the
+headers reach every request. Your own scripts can read the trace ID with `bru.getEnvVar('X_B3_TRACE_ID')`, for
+example to log it or assert on it.
+
+Headers are skipped, with a warning in the job log, when `PROJECT_ID` or `RUN_ID` is not set.
 
 ## Description of CI/CD process
 
