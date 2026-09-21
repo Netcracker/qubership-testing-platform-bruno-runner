@@ -1,0 +1,21 @@
+meta {
+  name: Get JSON
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/json
+  body: none
+  auth: none
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("has slideshow", function() {
+    expect(res.body).to.have.property("slideshow");
+  });
+}
