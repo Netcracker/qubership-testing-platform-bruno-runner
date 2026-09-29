@@ -53,6 +53,7 @@ When running it's implicitly uses all [Deploy parameters](#deploy-parameters) it
 | NOTIFICATION_RECIPIENTS   | string | yes       | `someEmail@no-reply.com`                             | Emails of test result recipients                                             |
 | EXTRA_VARS                | string | no        | `""`                                                 | Additional environment variables to be injected into the runner environment. |
 | TRIGGER_AUTHOR                      | string  | no        | `""`                                      | Optional technical parameter. Used to display the test run author in the report.                                                                                                                                                                             |
+| TYPE_RUN                            | string  | no        | `""`                                      | Run type added to every Allure test result as the `type_run` label. It can be supplied through `EXTRA_VARS`.                                                                                                                                                |
 
 ## Manual run
 
@@ -76,6 +77,7 @@ If you want to use custom runners or local run here is a list of parameters
 | BRUNO_GLOBAL_ENV                   | string  | no        | `""`                                      | Name of Bruno global environment file stored in the environments directory. For usage, see [How to set Global environment file](#how-to-set-global-environment-file). |
 | BRUNO_WORKSPACE_PATH                | string  | no        | `""`                                      | Workspace path for Bruno runner. For usage, see [How to set Global environment file](#how-to-set-global-environment-file). |
 | ATP_ENVGENE_CONFIGURATION           | JSON    | no        | `{}`                                      | Additional test parameters (Systems) to pass to test runner from EnvGene.                                                                                               |
+| TYPE_RUN                            | string  | no        | `""`                                      | Run type added to every Allure `*-result.json` file as `{ "name": "type_run", "value": "<TYPE_RUN>" }`. Pass it directly or as `EXTRA_VARS=TYPE_RUN=<value>`.                 |
 | ATP_STORAGE_BUCKET                  | string  | **yes**   | `""`                                      | S3 bucket name for uploading results.                                                                                                                                   |
 | ATP_STORAGE_USERNAME                | string  | **yes**   | `storage-access-key`                      | Access key for S3 bucket.                                                                                                                                               |
 | ATP_STORAGE_PASSWORD                | string  | **yes**   | `storage-secret-key`                      | Secret key for S3 bucket.                                                                                                                                               |
@@ -97,6 +99,8 @@ If you want to use custom runners or local run here is a list of parameters
 | CONTAINER_SECURITY_CONTEXT          | object  | no        | `{}`                                      | Optional overrides merged with chart defaults (`allowPrivilegeEscalation: false`, drop `ALL`). Always applied to the runner Job. |
 | AFFINITY                            | object  | no        | `{}`                                      | Pod affinity rules.                                                                                                                                                     |
 | TOLERATIONS                         | array   | no        | `[]`                                      | Pod tolerations.                                                                                                                                                        |
+
+Allure label names are controlled by the runner. To support another run-wide label, add its environment-variable-to-label-name mapping to `scripts/allure-labels.sh`; callers provide only the mapped variable values.
 
 The Job always gets a pod and container `securityContext` (`runAsNonRoot`, `RuntimeDefault` seccomp, drop `ALL` capabilities). On vanilla Kubernetes, `POD_SECURITY_CONTEXT` pins UID/GID **1007** (same as the image `USER`). 
 
