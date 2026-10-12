@@ -41,17 +41,31 @@ try {
   assert.match(failed.statusDetails.trace, /expected 503 to equal 200/);
   assert.equal(failed.steps.find((step) => step.name === "status is 200").status, "failed");
 
-  for (const stepName of ["Request Headers", "Request Body", "Response Headers", "Response Body"]) {
-    const attachment = failed.steps.find((step) => step.name === stepName).attachments[0];
-    assert.ok(fs.existsSync(path.join(outDir, attachment.source)), `missing ${stepName} attachment`);
-  }
+  assert.ok(!passed.steps.some((step) => step.attachments));
+  const attachments = failed.steps.flatMap((step) => step.attachments || []);
+  assert.deepEqual(attachments.map((a) => a.name), ["Request", "Response"]);
+  const response = JSON.parse(fs.readFileSync(path.join(outDir, attachments[1].source), "utf8"));
+  assert.equal(response.status, 503);
+  assert.equal(response.headers["content-type"], "text/html");
+  assert.match(response.responseBody, /503 Service Temporarily Unavailable/);
 
-  const containerFiles = fs.readdirSync(outDir).filter((file) => file.endsWith("-container.json"));
-  assert.equal(containerFiles.length, 1);
-  assert.equal(
-    JSON.parse(fs.readFileSync(path.join(outDir, containerFiles[0]), "utf8")).children.length,
-    2
-  );
+  assert.equal(fs.readdirSync(outDir).filter((f) => f.endsWith("-container.json")).length, 0);
+  assert.equal(fs.readdirSync(outDir).filter((f) => f !== "executor.json").length, 4);
+
+  const debugDir = fs.mkdtempSync(path.join(os.tmpdir(), "bruno-to-allure-debug-"));
+  try {
+    const debugRun = spawnSync(process.execPath, [converter, fixture, debugDir, "smoke-collection"], {
+      encoding: "utf8",
+      env: { ...process.env, DEBUG_HTTP_MODE: "true" },
+    });
+    assert.equal(debugRun.status, 0, `${debugRun.stdout}\n${debugRun.stderr}`);
+    assert.equal(
+      fs.readdirSync(debugDir).filter((f) => /-(request|response)\.json$/.test(f)).length,
+      4
+    );
+  } finally {
+    fs.rmSync(debugDir, { recursive: true, force: true });
+  }
   assert.ok(fs.existsSync(path.join(outDir, "executor.json")));
 
   console.log("Bruno V4 JSON-to-Allure conversion test passed");
