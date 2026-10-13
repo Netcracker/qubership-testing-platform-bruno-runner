@@ -10,11 +10,12 @@ const { spawnSync } = require("node:child_process");
 
 const root = path.resolve(__dirname, "..");
 const fixture = path.join(root, "test", "fixtures", "v4-bruno-report.json");
+const collectionDir = path.join(root, "test", "fixtures", "smoke-collection");
 const converter = path.join(root, "scripts", "tools", "bruno-to-allure.js");
 const outDir = fs.mkdtempSync(path.join(os.tmpdir(), "bruno-to-allure-v4-"));
 
 try {
-  const run = spawnSync(process.execPath, [converter, fixture, outDir, "smoke-collection"], {
+  const run = spawnSync(process.execPath, [converter, fixture, outDir, "smoke-collection", collectionDir], {
     encoding: "utf8",
   });
   assert.equal(run.status, 0, `${run.stdout}\n${run.stderr}`);
@@ -33,6 +34,15 @@ try {
   assert.equal(passed.status, "passed");
   assert.ok(passed.labels.some((label) => label.name === "suite" && label.value === "smoke-collection"));
   assert.ok(passed.labels.some((label) => label.name === "subSuite" && label.value === "folder-a"));
+  assert.deepEqual(
+    passed.labels.filter((label) => ["component", "module", "feature", "severity"].includes(label.name)),
+    [
+      { name: "component", value: "Authorization" },
+      { name: "module", value: "Логин" },
+      { name: "feature", value: "Вход по паролю" },
+      { name: "severity", value: "critical" }
+    ]
+  );
   assert.equal(passed.parameters.find((parameter) => parameter.name === "Method").value, "GET");
 
   const failed = results["Get JSON"];
