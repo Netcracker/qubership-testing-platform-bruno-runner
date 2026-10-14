@@ -38,8 +38,8 @@ try {
     passed.labels.filter((label) => ["component", "module", "feature", "severity"].includes(label.name)),
     [
       { name: "component", value: "Authorization" },
-      { name: "module", value: "Логин" },
-      { name: "feature", value: "Вход по паролю" },
+      { name: "module", value: "Login" },
+      { name: "feature", value: "Login by password" },
       { name: "severity", value: "critical" }
     ]
   );
