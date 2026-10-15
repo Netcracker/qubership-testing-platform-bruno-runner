@@ -1,0 +1,126 @@
+[
+  {
+    "iterationIndex": 0,
+    "results": [
+      {
+        "test": {
+          "filename": "folder-a\\get-status.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "https://example.test/status/200",
+          "headers": {
+            "Accept": "application/json",
+            "content-type": null
+          }
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "content-type": "application/json"
+          },
+          "data": {
+            "ok": true
+          },
+          "url": "https://example.test/status/200",
+          "responseTime": 42,
+          "duration": 42,
+          "size": 11
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "status is 200",
+            "status": "pass",
+            "uid": "Gh-xdjdEtcCBshrYwjNL3"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 1.30512,
+        "name": "Get Status",
+        "suitename": "C:\\Users\\arko0220\\IdeaProjectsAtp\\qubership-testing-platform-bruno-runner\\test\\fixtures\\smoke-collection\\folder-a\\get-status",
+        "path": "folder-a\\get-status",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "folder-a\\get-json.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "https://httpbin.org/json",
+          "headers": {
+            "Accept": "application/json",
+            "content-type": null
+          }
+        },
+        "response": {
+          "status": 503,
+          "statusText": "Service Temporarily Unavailable",
+          "headers": {
+            "server": "awselb/2.0",
+            "date": "Fri, 31 Jul 2026 11:23:28 GMT",
+            "content-type": "text/html",
+            "content-length": "162",
+            "connection": "close"
+          },
+          "data": "<html>\r\n<head><title>503 Service Temporarily Unavailable</title></head>\r\n<body>\r\n<center><h1>503 Service Temporarily Unavailable</h1></center>\r\n</body>\r\n</html>\r\n",
+          "url": "https://httpbin.org/json",
+          "responseTime": 853,
+          "duration": 853,
+          "size": 162
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "status is 200",
+            "status": "fail",
+            "error": "expected 503 to equal 200",
+            "uid": "AjqVCto1TNdJAfb6SKvMG"
+          },
+          {
+            "description": "has slideshow",
+            "status": "fail",
+            "error": "expected '<html>\\r\\n<head><title>503 Service Te…' to have property 'slideshow'",
+            "uid": "dT9tSVtOKNByCPpmw9SQG"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.9454247,
+        "name": "Get JSON",
+        "suitename": "C:\\Users\\arko0220\\IdeaProjectsAtp\\qubership-testing-platform-bruno-runner\\test\\fixtures\\smoke-collection\\folder-a\\get-json",
+        "path": "folder-a\\get-json",
+        "iterationIndex": 0
+      }
+    ],
+    "summary": {
+      "totalRequests": 2,
+      "passedRequests": 0,
+      "failedRequests": 2,
+      "errorRequests": 0,
+      "skippedRequests": 0,
+      "skippedByBail": 0,
+      "totalAssertions": 0,
+      "passedAssertions": 0,
+      "failedAssertions": 0,
+      "totalTests": 3,
+      "passedTests": 0,
+      "failedTests": 3,
+      "totalPreRequestTests": 0,
+      "passedPreRequestTests": 0,
+      "failedPreRequestTests": 0,
+      "totalPostResponseTests": 0,
+      "passedPostResponseTests": 0,
+      "failedPostResponseTests": 0
+    }
+  }
+]

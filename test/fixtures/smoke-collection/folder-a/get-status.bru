@@ -1,0 +1,21 @@
+meta {
+  name: Get Status
+  type: http
+  seq: 1
+  allure.label.component: Authorization
+  allure.label.module: Login
+  allure.label.feature: Login by password
+  allure.label.severity: critical
+}
+
+get {
+  url: {{baseUrl}}/status/200
+  body: none
+  auth: none
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+}

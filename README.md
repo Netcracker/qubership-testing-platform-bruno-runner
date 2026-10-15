@@ -8,10 +8,12 @@
 - [Deploy Parameters](#deploy-parameters)
 - [Hardware / Resource Requirements (HWE)](#hardware--resource-requirements-hwe)
 - [How to Set Global Environment File](#how-to-set-global-environment-file)
+- [How to Filter Requests by Tags](#how-to-filter-requests-by-tags)
 - [OpenTelemetry (B3) Trace Headers](#opentelemetry-b3-trace-headers)
 - [Description of CI/CD Process](#description-of-cicd-process)
   - [Main Flow](#main-flow)
 - [Reporting](#reporting)
+- [Bruno V4 migration](#bruno-v4-migration)
 - [Local Build](#local-build)
   - [1. Prerequisites](#1-prerequisites)
   - [2. Install CLI Utilities: `jq` and `s5cmd`](#2-install-cli-utilities-jq-and-s5cmd)
@@ -52,6 +54,7 @@ When running it's implicitly uses all [Deploy parameters](#deploy-parameters) it
 | NOTIFICATION_RECIPIENTS   | string | yes       | `someEmail@no-reply.com`                             | Emails of test result recipients                                             |
 | EXTRA_VARS                | string | no        | `""`                                                 | Additional environment variables to be injected into the runner environment. |
 | TRIGGER_AUTHOR                      | string  | no        | `""`                                      | Optional technical parameter. Used to display the test run author in the report.                                                                                                                                                                             |
+| TYPE_RUN                            | string  | no        | `""`                                      | Run type added to every Allure test result as the `type_run` label. It can be supplied through `EXTRA_VARS`.                                                                                                                                                |
 
 ## Manual run
 
@@ -72,10 +75,14 @@ If you want to use custom runners or local run here is a list of parameters
 | RUN_ID                              | string  | **yes**   | `""`                                      | Test run identifier from the orchestrator, used as-is in the `X-B3-TraceId` header. See [OpenTelemetry (B3) trace headers](#opentelemetry-b3-trace-headers). |
 | BRUNO_ENV                           | string  | no        | `""`                                      | Name of Bruno environment to use (e.g., envoriment-template.bru).                                                                                                       |
 | BRUNO_FLAGS                         | string  | no        | `--insecure`                              | Extra flags to pass to the Bruno CLI when running collections. For example, `--insecure --r`.                                                                           |
+| PARALLELISM                         | integer | no        | `4`                                       | Maximum number of Bruno collections executed concurrently. Set to `1` to run collections sequentially.                                                                  |
+| DEBUG_HTTP_MODE                     | boolean | no        | `false`                                   | `false`: Request/Response attachments (headers + body) are written only for failed requests. `true`: written for every request.                                          |
 | BRUNO_FOLDERS                       | string  | no        | ``                                        | Pipe-separated list of folders inside the `collections/` directory. If set, only these collections will be run.<br>Example: `BRUNO_FOLDERS="collectionA\|collectionB"`. |
+| BRUNO_TAGS                          | string  | no        | ``                                        | Pipe-separated Bruno request tags passed to `bru run --tags` (pipe is required because EXTRA_VARS splits on comma).<br>Example: `BRUNO_TAGS=smoke` or `BRUNO_TAGS=smoke\|sanity`. |
 | BRUNO_GLOBAL_ENV                   | string  | no        | `""`                                      | Name of Bruno global environment file stored in the environments directory. For usage, see [How to set Global environment file](#how-to-set-global-environment-file). |
 | BRUNO_WORKSPACE_PATH                | string  | no        | `""`                                      | Workspace path for Bruno runner. For usage, see [How to set Global environment file](#how-to-set-global-environment-file). |
 | ATP_ENVGENE_CONFIGURATION           | JSON    | no        | `{}`                                      | Additional test parameters (Systems) to pass to test runner from EnvGene.                                                                                               |
+| TYPE_RUN                            | string  | no        | `""`                                      | Run type added to every Allure `*-result.json` file as `{ "name": "type_run", "value": "<TYPE_RUN>" }`. Pass it directly or as `EXTRA_VARS=TYPE_RUN=<value>`.                 |
 | ATP_STORAGE_BUCKET                  | string  | **yes**   | `""`                                      | S3 bucket name for uploading results.                                                                                                                                   |
 | ATP_STORAGE_USERNAME                | string  | **yes**   | `storage-access-key`                      | Access key for S3 bucket.                                                                                                                                               |
 | ATP_STORAGE_PASSWORD                | string  | **yes**   | `storage-secret-key`                      | Secret key for S3 bucket.                                                                                                                                               |
@@ -97,6 +104,8 @@ If you want to use custom runners or local run here is a list of parameters
 | CONTAINER_SECURITY_CONTEXT          | object  | no        | `{}`                                      | Optional overrides merged with chart defaults (`allowPrivilegeEscalation: false`, drop `ALL`). Always applied to the runner Job. |
 | AFFINITY                            | object  | no        | `{}`                                      | Pod affinity rules.                                                                                                                                                     |
 | TOLERATIONS                         | array   | no        | `[]`                                      | Pod tolerations.                                                                                                                                                        |
+
+Allure label names are controlled by the runner. To support another run-wide label, add its environment-variable-to-label-name mapping to `scripts/allure-labels.sh`; callers provide only the mapped variable values.
 
 The Job always gets a pod and container `securityContext` (`runAsNonRoot`, `RuntimeDefault` seccomp, drop `ALL` capabilities). On vanilla Kubernetes, `POD_SECURITY_CONTEXT` pins UID/GID **1007** (same as the image `USER`).
 
@@ -178,6 +187,31 @@ This environment variable specifies the path to your Bruno workspace directory. 
 - Ensure `workspace.yml` and `collections/` and `environments/` live inside the directory you specify.
 - If you see errors about missing workspace or collection files, double-check your path and directory structure.
 
+## How to Filter Requests by Tags
+
+Set `BRUNO_TAGS` in EXTRA_VARS to pass `--tags` to Bruno CLI. Use `|` to list multiple tags — EXTRA_VARS splits entries on comma, the same constraint as `BRUNO_FOLDERS`.
+
+```text
+EXTRA_VARS=BRUNO_TAGS=smoke
+EXTRA_VARS=BRUNO_TAGS=smoke|sanity
+```
+
+The runner converts the pipe-separated list to Bruno's CLI form (`bru run --tags smoke,sanity`). Bruno requires a request to have **all** listed tags. Tag filtering can be combined with `BRUNO_FOLDERS`.
+
+Requests must declare tags in the `.bru` `meta` block:
+
+```text
+meta {
+  name: Get users
+  type: http
+  seq: 1
+  tags: [
+    smoke
+    sanity
+  ]
+}
+```
+
 ## OpenTelemetry (B3) trace headers
 
 The runner stamps every request in a collection with B3 trace headers, so a tail-sampling collector can group the
@@ -228,6 +262,19 @@ During the collection run, reports are generated in three formats: CLI, JSON, an
 - CLI - Performs logging to the console. Required for local debugging of the service itself, as well as debugging of the collection.
 - JSON - This is a built-in Bruno logger that writes results to a JSON file. It is convenient for automated parsing of results.
 - Allure - A system for visually displaying the results of collection runs. Ideal for visual analysis of automated test results by humans.
+
+## Bruno V4 migration
+
+This runner uses `@usebruno/cli` 4.0.0 and continues to run collections with `--env` and `--reporter-json`; it does not consume Bruno JUnit output.
+
+Before moving a collection repository to Bruno V4:
+
+1. Coordinate the desktop/client upgrade across the team. V4 descriptions, typed variables, migrated secrets, and YAML WebSocket multi-message requests can be incompatible with older clients.
+2. If the collection uses a root `secrets.json`, open it in the Bruno V4 desktop app. The app moves its configuration into the selected environment's `externalSecrets` section; the CLI does not perform this migration. Continue passing the environment through `BRUNO_ENV`.
+3. Audit scripts using `bru.setEnvVar`, `bru.deleteEnvVar`, and `bru.setGlobalEnvVar`. V4 persists these changes to disk. Replace operations handling credentials, tokens, or API keys with `bru.setVar` / `bru.deleteVar` so the values remain in memory.
+4. Replace deprecated `{{$secrets.name.key}}` references with `{{name.key}}` within Bruno's three-month compatibility window.
+
+The V4 JUnit `classname` change does not affect this runner: it parses Bruno JSON and emits Allure results.
 
 ## Local Build
 
