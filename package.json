@@ -8,8 +8,12 @@
     },
     "dependencies": {
         "@usebruno/cli": "4.0.0",
+        "@usebruno/lang": "0.38.0",
         "allure": "3.1.0",
         "axios": "1.16.0",
         "uuid": "11.1.0"
+    },
+    "devDependencies": {
+        "bats": "1.11.1"
     }
 }
