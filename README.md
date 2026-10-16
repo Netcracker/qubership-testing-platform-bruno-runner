@@ -19,13 +19,13 @@
   - [2. Install CLI Utilities: `jq` and `s5cmd`](#2-install-cli-utilities-jq-and-s5cmd)
   - [3. Install Project Dependencies](#3-install-project-dependencies)
   - [4. Troubleshooting](#4-troubleshooting)
-- [Local Run Collections Without S3 Allure Report (via `local_start.sh`)](#local-run-collections-without-s3-allure-report-via-local_startsh)
+- [Local Run Collections Without S3 Allure Report (via
+  `local_start.sh`)](#local-run-collections-without-s3-allure-report-via-local_startsh)
   - [Pre-step: Prepare Test Data (REQUIRED)](#pre-step-prepare-test-data-required)
-- [Local Run Collections With S3 Allure Report (via `local_start.sh`)](#local-run-collections-with-s3-allure-report-via-local_startsh)
+- [Local Run Collections With S3 Allure Report (via
+  `local_start.sh`)](#local-run-collections-with-s3-allure-report-via-local_startsh)
   - [Pre-step: Prepare Test Data (REQUIRED)](#pre-step-prepare-test-data-required-with-s3)
   - [Quick Start](#quick-start)
-
-
 
 ## Overview
 
@@ -105,22 +105,27 @@ If you want to use custom runners or local run here is a list of parameters
 | AFFINITY                            | object  | no        | `{}`                                      | Pod affinity rules.                                                                                                                                                                                                                |
 | TOLERATIONS                         | array   | no        | `[]`                                      | Pod tolerations.                                                                                                                                                                                                                   |
 
-Allure label names are controlled by the runner. To support another run-wide label, add its environment-variable-to-label-name mapping to `scripts/allure-labels.sh`; callers provide only the mapped variable values.
+Allure label names are controlled by the runner. To support another run-wide label, add its
+environment-variable-to-label-name mapping to `scripts/allure-labels.sh`; callers provide only the mapped variable
+values.
 
-The Job always gets a pod and container `securityContext` (`runAsNonRoot`, `RuntimeDefault` seccomp, drop `ALL` capabilities). On vanilla Kubernetes, `POD_SECURITY_CONTEXT` pins UID/GID **1007** (same as the image `USER`).
+The Job always gets a pod and container `securityContext` (`runAsNonRoot`, `RuntimeDefault` seccomp, drop `ALL`
+capabilities). On vanilla Kubernetes, `POD_SECURITY_CONTEXT` pins UID/GID **1007** (same as the image `USER`).
 
-On OpenShift Helm detects `security.openshift.io/v1` and omits `runAsUser`/`runAsGroup`/`fsGroup` so `restricted-v2` can assign the project UID range. Offline `helm template` without `--api-versions security.openshift.io/v1` looks like Kubernetes and keeps the UID pin.
+On OpenShift Helm detects `security.openshift.io/v1` and omits `runAsUser`/`runAsGroup`/`fsGroup` so `restricted-v2` can
+assign the project UID range. Offline `helm template` without `--api-versions security.openshift.io/v1` looks like
+Kubernetes and keeps the UID pin.
 
 ## Hardware / Resource Requirements (HWE)
 
 Supported 2 profiles: `dev`, `prod`.
 
-| Parameter        | Dev    | Prod   |
-|------------------|--------|--------|
-| MEMORY_REQUEST   | 100Mi  | 100Mi  |
-| MEMORY_LIMIT     | 1000Mi | 2000Mi |
-| CPU_REQUEST      | 100m   | 300m   |
-| CPU_LIMIT        | 500m   | 1000m  |
+| Parameter      | Dev    | Prod   |
+|----------------|--------|--------|
+| MEMORY_REQUEST | 100Mi  | 100Mi  |
+| MEMORY_LIMIT   | 1000Mi | 2000Mi |
+| CPU_REQUEST    | 100m   | 300m   |
+| CPU_LIMIT      | 500m   | 1000m  |
 
 ## How to set Global environment file
 
@@ -128,7 +133,8 @@ Supported 2 profiles: `dev`, `prod`.
 
 > TO USE THIS FEATURE PLEASE ADD workspace.yml file to your repository (more details and an example is below)
 
-Specifies the name of a Bruno global environment file (e.g., `debug`) to use when running collections. The environment file should exist in the `environments/` directory within your Bruno workspace.
+Specifies the name of a Bruno global environment file (e.g., `debug`) to use when running collections. The environment
+file should exist in the `environments/` directory within your Bruno workspace.
 
 **Usage:**
 
@@ -136,7 +142,8 @@ Specifies the name of a Bruno global environment file (e.g., `debug`) to use whe
   `BRUNO_GLOBAL_ENV=debug`
 
 - The specified file `debug.yml` must be located under `environments/` inside your workspace path.
-- You may combine `BRUNO_GLOBAL_ENV` with `BRUNO_WORKSPACE_PATH` if your environments directory is not in the root folder.
+- You may combine `BRUNO_GLOBAL_ENV` with `BRUNO_WORKSPACE_PATH` if your environments directory is not in the root
+  folder.
 
 **Example:**
 
@@ -154,17 +161,23 @@ Suppose your project structure is:
 To use `debug.bru` (which defines global variables or settings for your collections):
 
 **Note:**
+
 - You do not need to specify the file extension `.yml`
 - If not set, the runner will skip adding a global environment.
 
-For more about global environments in Bruno: see the [Bruno documentation](https://docs.usebruno.com/variables/global-environment-variables)
+For more about global environments in Bruno: see
+the [Bruno documentation](https://docs.usebruno.com/variables/global-environment-variables)
 
 ### BRUNO_WORKSPACE_PATH
 
-This environment variable specifies the path to your Bruno workspace directory. The workspace directory must contain your `workspace.yml`, as well as your `collections/` and `environments/` directories. Use this variable when the default workspace location (usually the root of the repository) does not match where your Bruno project files are stored.
+This environment variable specifies the path to your Bruno workspace directory. The workspace directory must contain
+your `workspace.yml`, as well as your `collections/` and `environments/` directories. Use this variable when the default
+workspace location (usually the root of the repository) does not match where your Bruno project files are stored.
 
 **How to use:**
-- Set `BRUNO_WORKSPACE_PATH` to the relative or absolute path of the folder containing your `workspace.yml` and `collections/`.
+
+- Set `BRUNO_WORKSPACE_PATH` to the relative or absolute path of the folder containing your `workspace.yml` and
+  `collections/`.
 - For example, if your directory structure is:
   ```text
   <repository-name>/
@@ -174,29 +187,34 @@ This environment variable specifies the path to your Bruno workspace directory. 
   │   └── environments/
   ```
   Set `BRUNO_WORKSPACE_PATH=../..` or `BRUNO_WORKSPACE_PATH=subdir`
-- This allows the runner to locate your workspace and environments correctly regardless of where they are in your repository.
+- This allows the runner to locate your workspace and environments correctly regardless of where they are in your
+  repository.
 
 > If you do not set `BRUNO_WORKSPACE_PATH`, the runner will assume the workspace is in the root directory by default.
 
 **Common use-cases:**
+
 - Monorepos or projects with nested structures.
 - Working with multiple Bruno projects in a single repository.
 - Custom layouts for project organization.
 
 **Troubleshooting Tips:**
+
 - Ensure `workspace.yml` and `collections/` and `environments/` live inside the directory you specify.
 - If you see errors about missing workspace or collection files, double-check your path and directory structure.
 
 ## How to Filter Requests by Tags
 
-Set `BRUNO_TAGS` in EXTRA_VARS to pass `--tags` to Bruno CLI. Use `|` to list multiple tags — EXTRA_VARS splits entries on comma, the same constraint as `BRUNO_FOLDERS`.
+Set `BRUNO_TAGS` in EXTRA_VARS to pass `--tags` to Bruno CLI. Use `|` to list multiple tags — EXTRA_VARS splits entries
+on comma, the same constraint as `BRUNO_FOLDERS`.
 
 ```text
 EXTRA_VARS=BRUNO_TAGS=smoke
 EXTRA_VARS=BRUNO_TAGS=smoke|sanity
 ```
 
-The runner converts the pipe-separated list to Bruno's CLI form (`bru run --tags smoke,sanity`). Bruno requires a request to have **all** listed tags. Tag filtering can be combined with `BRUNO_FOLDERS`.
+The runner converts the pipe-separated list to Bruno's CLI form (`bru run --tags smoke,sanity`). Bruno requires a
+request to have **all** listed tags. Tag filtering can be combined with `BRUNO_FOLDERS`.
 
 Requests must declare tags in the `.bru` `meta` block:
 
@@ -254,25 +272,34 @@ flowchart TD
     end
 ```
 
-
 ## Reporting
 
 During the collection run, reports are generated in three formats: CLI, JSON, and Allure.
 
-- CLI - Performs logging to the console. Required for local debugging of the service itself, as well as debugging of the collection.
-- JSON - This is a built-in Bruno logger that writes results to a JSON file. It is convenient for automated parsing of results.
-- Allure - A system for visually displaying the results of collection runs. Ideal for visual analysis of automated test results by humans.
+- CLI - Performs logging to the console. Required for local debugging of the service itself, as well as debugging of the
+  collection.
+- JSON - This is a built-in Bruno logger that writes results to a JSON file. It is convenient for automated parsing of
+  results.
+- Allure - A system for visually displaying the results of collection runs. Ideal for visual analysis of automated test
+  results by humans.
 
 ## Bruno V4 migration
 
-This runner uses `@usebruno/cli` 4.0.0 and continues to run collections with `--env` and `--reporter-json`; it does not consume Bruno JUnit output.
+This runner uses `@usebruno/cli` 4.0.0 and continues to run collections with `--env` and `--reporter-json`; it does not
+consume Bruno JUnit output.
 
 Before moving a collection repository to Bruno V4:
 
-1. Coordinate the desktop/client upgrade across the team. V4 descriptions, typed variables, migrated secrets, and YAML WebSocket multi-message requests can be incompatible with older clients.
-2. If the collection uses a root `secrets.json`, open it in the Bruno V4 desktop app. The app moves its configuration into the selected environment's `externalSecrets` section; the CLI does not perform this migration. Continue passing the environment through `BRUNO_ENV`.
-3. Audit scripts using `bru.setEnvVar`, `bru.deleteEnvVar`, and `bru.setGlobalEnvVar`. V4 persists these changes to disk. Replace operations handling credentials, tokens, or API keys with `bru.setVar` / `bru.deleteVar` so the values remain in memory.
-4. Replace deprecated `{{$secrets.name.key}}` references with `{{name.key}}` within Bruno's three-month compatibility window.
+1. Coordinate the desktop/client upgrade across the team. V4 descriptions, typed variables, migrated secrets, and YAML
+   WebSocket multi-message requests can be incompatible with older clients.
+2. If the collection uses a root `secrets.json`, open it in the Bruno V4 desktop app. The app moves its configuration
+   into the selected environment's `externalSecrets` section; the CLI does not perform this migration. Continue passing
+   the environment through `BRUNO_ENV`.
+3. Audit scripts using `bru.setEnvVar`, `bru.deleteEnvVar`, and `bru.setGlobalEnvVar`. V4 persists these changes to
+   disk. Replace operations handling credentials, tokens, or API keys with `bru.setVar` / `bru.deleteVar` so the values
+   remain in memory.
+4. Replace deprecated `{{$secrets.name.key}}` references with `{{name.key}}` within Bruno's three-month compatibility
+   window.
 
 The V4 JUnit `classname` change does not affect this runner: it parses Bruno JSON and emits Allure results.
 
@@ -281,6 +308,7 @@ The V4 JUnit `classname` change does not affect this runner: it parses Bruno JSO
 This guide explains how to prepare your local machine to run the service and Bruno tests with reports.
 
 ## 1) Prerequisites
+
 - **Node.js LTS** (includes `npm`). Check:
   ```bash
   node -v && npm -v
@@ -288,7 +316,9 @@ This guide explains how to prepare your local machine to run the service and Bru
 - **Git** (to use Git Bash / PowerShell).
 
 ## 2) Install CLI utilities: `jq` and `s5cmd`
+
 Recommended on Windows: install via **Scoop**¹
+
 ```powershell
 # Install Scoop (if not installed)¹
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
@@ -299,6 +329,7 @@ scoop install jq s5cmd
 ```
 
 Alternatives:
+
 ```powershell
 # Winget
 winget install jqlang.jq
@@ -310,6 +341,7 @@ choco install s5cmd
 ```
 
 Verify:
+
 ```bash
 jq --version
 s5cmd --version
@@ -318,12 +350,15 @@ s5cmd --version
 > **Git Bash note:** if commands aren’t visible, add Scoop shims to PATH:
 
 ## 3) Install project dependencies
+
 In the repository root:
+
 ```bash
 npm install
 ```
 
 ## 4) Troubleshooting
+
 - **`jq: command not found`** → install via Scoop/Winget/Choco; re-open terminal.
 - **`s5cmd: command not found`** → ensure it’s installed and visible in PATH (see note above).
 
@@ -332,14 +367,20 @@ npm install
 Below are minimal steps to run Bruno collections locally via the prepared script.
 
 ### Pre-step: Prepare test data (REQUIRED)
+
 Before running `local_start.sh`, you **must** prepare test data for conversion:
+
 1. Create/modify file `tools/local_test_params.json` and fill it with test data
-2. Download the collection(s) and environment(s) you need to run into the local-collection folder. The paths to the collections and environment(s) must match the contents of file `tools/local_test_params.json`
+2. Download the collection(s) and environment(s) you need to run into the local-collection folder. The paths to the
+   collections and environment(s) must match the contents of file `tools/local_test_params.json`
 3. You need to create a new folder named local-collection in the root directory.
-4. Add the folder containing the collection(s) and the environment for running to the local-collection folder (note: the environment must be located inside the folder with the collection in the `environments` subfolder (this is Bruno's condition))
+4. Add the folder containing the collection(s) and the environment for running to the local-collection folder (note: the
+   environment must be located inside the folder with the collection in the `environments` subfolder (this is Bruno's
+   condition))
 5. The main file for running the collection at the end of the local_starts.sh file should be start_tests.sh
 
 **Example content for `tools/local_test_params.json`:**
+
 ```json
 {
   "collections": [
@@ -367,18 +408,23 @@ Before running `local_start.sh`, you **must** prepare test data for conversion:
 Below are minimal steps to run Bruno collections locally via the prepared script.
 
 ### Pre-step: Prepare test data (REQUIRED) with S3
+
 Before running `local_start.sh`, you **must** prepare test data for conversion:
+
 1. Create/modify file `tools/local_test_params.json` and fill it with test data
-2. Download the collection(s) and environment(s) you need to run into the local-collection folder. The paths to the collections and environment(s) must match the contents of file `tools/local_test_params.json`
+2. Download the collection(s) and environment(s) you need to run into the local-collection folder. The paths to the
+   collections and environment(s) must match the contents of file `tools/local_test_params.json`
 3. You must fill in the values for the environment variables.
-4. You need to add a “.” symbol to each absolute path in the entrypoint.sh file and start_tests.sh (for example, to declare the contents of the scripts and tools folders).
-5. You need to add a command to navigate to the working directory (cd $WORK_DIR) before copying the start_tests.sh file to entrypoint.sh
+4. You need to add a “.” symbol to each absolute path in the entrypoint.sh file and start_tests.sh (for example, to
+   declare the contents of the scripts and tools folders).
+5. You need to add a command to navigate to the working directory (cd $WORK_DIR) before copying the start_tests.sh file
+   to entrypoint.sh
 6. The main file for running the collection at the end of the local_starts.sh file should be entrypoint.sh
 
 **Example of the contents of file `tools/local_test_params.json` is shown in the previous section.**
 
-
 ### Quick Start
+
 ```bash
 # from repo root
 
@@ -387,7 +433,6 @@ Before running `local_start.sh`, you **must** prepare test data for conversion:
 # Then run
 ./local_start.sh
 ```
-
 
 ---
 
@@ -403,16 +448,17 @@ ERROR: Download timed out (connect-timeout=30s, max-time=120s).
    curl: curl: (28) Operation timed out after 120000 milliseconds with 48064134 bytes received
 ```
 
-You can adjust these environment variables if you encounter timeout errors while cloning large repositories or with slow network connections:
+You can adjust these environment variables if you encounter timeout errors while cloning large repositories or with slow
+network connections:
 
 **ATP_TESTS_GIT_CLONE_CONNECT_TIMEOUT**  
-Sets the maximum time in seconds that `curl` will wait for a connection to establish when cloning the tests repository.  
+Sets the maximum time in seconds that `curl` will wait for a connection to establish when cloning the tests
+repository.  
 _Default: 30_
 
 **ATP_TESTS_GIT_CLONE_MAX_TIME**  
 Sets the overall maximum time in seconds that `curl` will spend downloading the repository archive before timing out.  
 _Default: 120_
-
 
 Set these variables inside EXTRA_VARS variable:
 
