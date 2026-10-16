@@ -11,21 +11,21 @@
 - [How to Filter Requests by Tags](#how-to-filter-requests-by-tags)
 - [OpenTelemetry (B3) Trace Headers](#opentelemetry-b3-trace-headers)
 - [Description of CI/CD Process](#description-of-cicd-process)
-    - [Main Flow](#main-flow)
+  - [Main Flow](#main-flow)
 - [Reporting](#reporting)
 - [Bruno V4 migration](#bruno-v4-migration)
 - [Local Build](#local-build)
-    - [1. Prerequisites](#1-prerequisites)
-    - [2. Install CLI Utilities: `jq` and `s5cmd`](#2-install-cli-utilities-jq-and-s5cmd)
-    - [3. Install Project Dependencies](#3-install-project-dependencies)
-    - [4. Troubleshooting](#4-troubleshooting)
+  - [1. Prerequisites](#1-prerequisites)
+  - [2. Install CLI Utilities: `jq` and `s5cmd`](#2-install-cli-utilities-jq-and-s5cmd)
+  - [3. Install Project Dependencies](#3-install-project-dependencies)
+  - [4. Troubleshooting](#4-troubleshooting)
 - [Local Run Collections Without S3 Allure Report (via
   `local_start.sh`)](#local-run-collections-without-s3-allure-report-via-local_startsh)
-    - [Pre-step: Prepare Test Data (REQUIRED)](#pre-step-prepare-test-data-required)
+  - [Pre-step: Prepare Test Data (REQUIRED)](#pre-step-prepare-test-data-required)
 - [Local Run Collections With S3 Allure Report (via
   `local_start.sh`)](#local-run-collections-with-s3-allure-report-via-local_startsh)
-    - [Pre-step: Prepare Test Data (REQUIRED)](#pre-step-prepare-test-data-required-with-s3)
-    - [Quick Start](#quick-start)
+  - [Pre-step: Prepare Test Data (REQUIRED)](#pre-step-prepare-test-data-required-with-s3)
+  - [Quick Start](#quick-start)
 
 ## Overview
 
