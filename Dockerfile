@@ -7,7 +7,7 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.22/community/" >/etc/apk/repo
     echo "https://dl-cdn.alpinelinux.org/alpine/v3.22/main/" >>/etc/apk/repositories && \
     apk update && apk add --no-cache ca-certificates \
       bash=5.2.37-r0 \
-      curl=8.14.1-r3 \
+      curl=8.14.1-r4 \
       jq=1.8.2-r0 \
       tar=1.35-r3 \
       unzip \
@@ -44,9 +44,12 @@ COPY --chown=runner:runner --chmod=755 scripts/ /scripts/
 COPY --chown=runner:runner scripts/runtimes/bruno-setup.sh /scripts/runtime-setup.sh
 COPY --chown=runner:runner --chmod=755 entrypoint.sh /app/entrypoint.sh
 
-RUN chgrp -R 0 /app /scripts \
-    && chmod -R g=u /app /scripts \
-    && chmod g+rx /app /scripts
+ARG LOCAL_BUILD=false
+RUN if [ "$LOCAL_BUILD" != "true" ]; then \
+      chgrp -R 0 /app /scripts \
+      && chmod -R g=u /app /scripts \
+      && chmod g+rx /app /scripts; \
+    fi
 
 USER 1007
 
