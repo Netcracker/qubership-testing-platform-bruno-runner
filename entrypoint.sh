@@ -54,7 +54,10 @@ trap 'finalize_once' EXIT
 # of the trap-independent path; a trailing `du` on each exit is not reachable because
 # finalize_once always exits 0, so it is printed right after the test run instead.
 log_disk_usage() {
-    echo "Disk usage: tmp=$(du -sh "${TMP_DIR:-/tmp}" 2>/dev/null | cut -f1) app=$(du -sh /app 2>/dev/null | cut -f1) project=$(du -sh "${PROJECT_DIR:${TMP_DIR:-/tmp}}" 2>/dev/null | cut -f1)"
+    echo "Disk usage:"
+    du -h -d1 "${TMP_DIR:-/tmp}" 2>/dev/null | sort -h | tail -n 10
+    du -sh "${PROJECT_DIR:-${TMP_DIR:-/tmp}}"/node_modules 2>/dev/null
+    du -sh /app/.[!.]* 2>/dev/null
 }
 
 init_environment              || fail "Environment initialization failed"
