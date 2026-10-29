@@ -1,7 +1,6 @@
 FROM node:20-alpine
 
 ENV HOME_EX=/app
-ENV HOME=/app
 
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.22/community/" >/etc/apk/repositories && \
     echo "https://dl-cdn.alpinelinux.org/alpine/v3.22/main/" >>/etc/apk/repositories && \
