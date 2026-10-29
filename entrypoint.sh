@@ -56,7 +56,6 @@ trap 'finalize_once' EXIT
 log_disk_usage() {
     echo "Disk usage:"
     du -h -d1 "${TMP_DIR:-/tmp}" 2>/dev/null | sort -h | tail -n 10
-    du -sh "${PROJECT_DIR:-${TMP_DIR:-/tmp}}"/node_modules 2>/dev/null
     du -sh /app/.[!.]* 2>/dev/null
 }
 
