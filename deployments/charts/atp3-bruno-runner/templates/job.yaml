@@ -25,7 +25,7 @@ spec:
             requests:
               memory: '{{ .Values.MEMORY_REQUEST | default "100Mi" }}'
               cpu: '{{ .Values.CPU_REQUEST | default "100m" }}'
-              ephemeral-storage: '{{ .Values.EPHEMERAL_STORAGE_REQUEST | default "2Gi" }}'
+              ephemeral-storage: '{{ .Values.EPHEMERAL_STORAGE_REQUEST | default "512Mi" }}'
             limits:
               memory: '{{ .Values.MEMORY_LIMIT | default "1000Mi" }}'
               cpu: '{{ .Values.CPU_LIMIT | default "500m" }}'
