@@ -65,6 +65,8 @@ spec:
               value: "{{ .Values.MONITORING_ENABLED }}"
             - name: DEBUG_MODE
               value: "{{ .Values.DEBUG_MODE }}"
+            - name: CLUSTER_NAME
+              value: "{{ .Values.CLUSTER_NAME }}"
             - name: TEST_PARAMS
               value: {{ toJson .Values.TEST_PARAMS | quote }}
             - name: EXTRA_VARS

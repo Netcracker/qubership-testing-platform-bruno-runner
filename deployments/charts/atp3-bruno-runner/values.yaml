@@ -25,6 +25,8 @@ TRIGGER_AUTHOR: ""
 # enabled is a flag to enable Security Context
 SECURITY_CONTEXT_ENABLED: false
 EXTRA_VARS: ""
+# Optional cluster name, no dashes (e.g. "atp3dev"). Result folder = <CLUSTER_NAME>-<ENVIRONMENT_NAME>; empty = <ENVIRONMENT_NAME>
+CLUSTER_NAME: ""
 # runAsUser is the user ID used to run the container
 podSecurityContext:
   runAsUser: 1000
