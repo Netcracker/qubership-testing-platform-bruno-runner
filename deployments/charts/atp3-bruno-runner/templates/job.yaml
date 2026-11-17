@@ -35,6 +35,8 @@ spec:
               value: "{{ .Values.ATP_TESTS_GIT_REPO_BRANCH }}"
             - name: ENVIRONMENT_NAME
               value: "{{ .Values.ENVIRONMENT_NAME }}"
+            - name: CLUSTER_NAME
+              value: "{{ .Values.CLUSTER_NAME }}"
             - name: ENV_CONFIGURATION_TEMPLATE_FILENAME
               value: {{ .Values.ENV_CONFIGURATION_TEMPLATE_FILENAME | default "environment-configuration-template.json" | quote }}
             - name: ATP_STORAGE_PROVIDER

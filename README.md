@@ -67,6 +67,7 @@ If you want to use custom runners or local run here is a list of parameters
 | Parameter                           | Type    | Mandatory | Default value                             | Description                                                                                                                                                                                                                        |
 |-------------------------------------|---------|-----------|-------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | ENVIRONMENT_NAME                    | string  | **yes**   | `default`                                 | Environment name (e.g., dev, test, prod).                                                                                                                                                                                          |
+| CLUSTER_NAME                        | string  | no        | `""`                                      | Optional cluster name without dashes (e.g., `atp3dev`). When set, the S3 result/report folder is `<CLUSTER_NAME>-<ENVIRONMENT_NAME>` (e.g., `atp3dev-dev`); otherwise `<ENVIRONMENT_NAME>`. A dash in `CLUSTER_NAME` makes initialization fail. |
 | ENV_CONFIGURATION_TEMPLATE_FILENAME | string  | no        | `environment-configuration-template.json` | Environment configuration template filename used during runtime configuration rendering.                                                                                                                                           |
 | ATP_TESTS_GIT_REPO_URL              | string  | **yes**   | `""`                                      | Git repository URL with test sources. https://<somegit>.com/<project>/<project>-tests.git                                                                                                                                          |
 | ATP_TESTS_GIT_TOKEN                 | string  | **yes**   | `your-token`                              | Access token for private Git repositories with tests (propagated automatically).                                                                                                                                                   |
@@ -262,6 +263,7 @@ flowchart TD
         runner_step1["Initialize env (init_environment)
             - validate ATP_STORAGE_* variables
             - set CURRENT_DATE/CURRENT_TIME defaults
+            - compute RESULT_FOLDER_NAME (CLUSTER_NAME-ENVIRONMENT_NAME or ENVIRONMENT_NAME)
             - create TMP_DIR=/tmp/clone
         "] -->
         runner_step2["Clone repository (git_clone.sh)"] -->

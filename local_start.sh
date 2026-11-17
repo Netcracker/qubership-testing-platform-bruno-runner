@@ -42,6 +42,7 @@ main() {
   # Set environment variables for local run and debugging
   # ============================================
   export ENVIRONMENT_NAME=""
+  export CLUSTER_NAME=""
   export ATP_TESTS_GIT_REPO_URL=""
   export ATP_TESTS_GIT_REPO_BRANCH=""
   export ATP_TESTS_GIT_TOKEN=""
